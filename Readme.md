@@ -1,7 +1,7 @@
 # Личный проект «Кекстаграм» [![Build status][travis-image]][travis-url]
 
 * Студент: [Никита Шикуц](https://up.htmlacademy.ru/javascript/17/user/331239).
-* Наставник: `Неизвестно`.
+* Наставник: [Вадим Двухжилов](https://htmlacademy.ru/profile/ericssan).
 
 ---
 
