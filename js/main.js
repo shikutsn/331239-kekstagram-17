@@ -57,20 +57,18 @@ var getRandomComment = function (commentsCount) {
   return comments;
 };
 
-var getRandomPhoto = function (photoNumber) {
-  var randomComment = getRandomComment(getRandomNumber(1, COMMENTS_MAX_COUNT + 1));
-
+var getRandomPhoto = function (index) {
   return {
-    url: 'photos/' + photoNumber + '.jpg',
+    url: 'photos/' + index + '.jpg',
     likes: getRandomNumber(LIKES_MIN_COUNT, LIKES_MAX_COUNT),
-    comments: randomComment
+    comments: getRandomComment(getRandomNumber(1, COMMENTS_MAX_COUNT + 1))
   };
 };
 
-var getPhotos = function (photosQuantity) {
+var getPhotos = function (quantity) {
   var output = [];
 
-  for (var i = 1; i <= photosQuantity; i++) {
+  for (var i = 1; i <= quantity; i++) {
     output.push(getRandomPhoto(i));
   }
 
