@@ -49,8 +49,8 @@ var getRandomComment = function (quantity) {
   for (var j = 0; j < quantity; j++) {
     comments.push({
       avatar: 'img/avatar-' + getRandomNumber(1, AVATARS_COUNT + 1) + '.svg',
-      message: COMMENTS[getRandomNumber(0, COMMENTS.length - 1)],
-      name: NAMES[getRandomNumber(0, NAMES.length - 1)]
+      message: COMMENTS[getRandomNumber(0, COMMENTS.length)],
+      name: NAMES[getRandomNumber(0, NAMES.length)]
     });
   }
 
