@@ -107,6 +107,4 @@ var pictureTemplate = document.querySelector('#picture')
 var fragment = fillFragment(photos, pictureTemplate);
 var picturesContainer = document.querySelector('.pictures');
 
-fillFragment(fragment, photos, pictureTemplate);
-
 picturesContainer.appendChild(fragment);
