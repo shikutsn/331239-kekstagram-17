@@ -43,14 +43,18 @@ var getRandomNumber = function (min, max) {
   return Math.floor(Math.random() * (max - min)) + min;
 };
 
+var getRandomArrayElement = function (arr) {
+  return arr[getRandomNumber(0, arr.length)];
+};
+
 var getRandomComment = function (quantity) {
   var comments = [];
 
   for (var j = 0; j < quantity; j++) {
     comments.push({
       avatar: 'img/avatar-' + getRandomNumber(1, AVATARS_COUNT + 1) + '.svg',
-      message: COMMENTS[getRandomNumber(0, COMMENTS.length)],
-      name: NAMES[getRandomNumber(0, NAMES.length)]
+      message: getRandomArrayElement(COMMENTS),
+      name: getRandomArrayElement(NAMES)
     });
   }
 
@@ -85,10 +89,14 @@ var renderPicture = function (photo, template) {
   return pictureElement;
 };
 
-var fillFragment = function (container, photosList, template) {
+var fillFragment = function (photosList, template) {
+  var fragment = document.createDocumentFragment();
+
   for (var i = 0; i < photosList.length; i++) {
-    container.appendChild(renderPicture(photosList[i], template));
+    fragment.appendChild(renderPicture(photosList[i], template));
   }
+
+  return fragment;
 };
 
 
@@ -96,7 +104,7 @@ var photos = getPhotos(PHOTOS_COUNT);
 var pictureTemplate = document.querySelector('#picture')
     .content
     .querySelector('.picture');
-var fragment = document.createDocumentFragment();
+var fragment = fillFragment(photos, pictureTemplate);
 var picturesContainer = document.querySelector('.pictures');
 
 fillFragment(fragment, photos, pictureTemplate);
