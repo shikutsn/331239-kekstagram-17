@@ -6,6 +6,53 @@ var AVATARS_COUNT = 6;
 var LIKES_MIN_COUNT = 15;
 var LIKES_MAX_COUNT = 200;
 
+var ESC_KEYCODE = 27;
+// var ENTER_KEYCODE = 13;
+
+var SCALE_MIN = 25;
+var SCALE_MAX = 100;
+var SCALE_STEP = 25;
+var SCALE_DEFAULT = 100;
+
+var FILTERS_TABLE = [
+  {
+    text: 'none',
+    min: 0,
+    max: 0,
+    unit: ''
+  },
+  {
+    text: 'grayscale',
+    min: 0,
+    max: 1,
+    unit: ''
+  },
+  {
+    text: 'sepia',
+    min: 0,
+    max: 1,
+    unit: ''
+  },
+  {
+    text: 'invert',
+    min: 0,
+    max: 100,
+    unit: '%'
+  },
+  {
+    text: 'blur',
+    min: 0,
+    max: 3,
+    unit: 'px'
+  },
+  {
+    text: 'brightness',
+    min: 1,
+    max: 3,
+    unit: ''
+  }
+];
+
 var COMMENTS = [
   'Всё отлично!',
   'В целом всё неплохо. Но не всё.',
@@ -105,6 +152,98 @@ var pictureTemplate = document.querySelector('#picture')
     .content
     .querySelector('.picture');
 var fragment = fillFragment(photos, pictureTemplate);
-var picturesContainer = document.querySelector('.pictures');
+var picturesEl = document.querySelector('.pictures');
 
-picturesContainer.appendChild(fragment);
+picturesEl.appendChild(fragment);
+
+
+// ------------------------------
+// Задание 7, подробности
+
+
+var uploadFileEl = document.querySelector('#upload-file');
+var imgEditWindowEl = document.querySelector('.img-upload__overlay');
+var imgEditWindowCloseEl = imgEditWindowEl.querySelector('#upload-cancel');
+var scaleValueEl = imgEditWindowEl.querySelector('.scale__control--value');
+var imgUploadPreviewEl = imgEditWindowEl.querySelector('.img-upload__preview img');
+var scaleDecrementEl = imgEditWindowEl.querySelector('.scale__control--smaller');
+var scaleIncrementEl = imgEditWindowEl.querySelector('.scale__control--bigger');
+
+var onImgEditWindowEscPress = function (evt) {
+  if (evt.keyCode === ESC_KEYCODE) {
+    closeImgEditWindow();
+  }
+};
+
+var setImgScale = function (imgEl, scale, scaleMax) {
+  scaleValueEl.value = scale + '%';
+  imgEl.style.transform = 'scale(' + scale / scaleMax + ')';
+};
+
+var openImgEditWindow = function () {
+  imgEditWindowEl.classList.remove('hidden');
+  imgEditWindowCloseEl.addEventListener('click', closeImgEditWindow);
+  document.addEventListener('keydown', onImgEditWindowEscPress);
+  scaleValueEl.value = SCALE_DEFAULT + '%';
+  setImgScale(imgUploadPreviewEl, SCALE_DEFAULT, SCALE_MAX);
+};
+
+var closeImgEditWindow = function () {
+  imgEditWindowEl.classList.add('hidden');
+  uploadFileEl.value = '';
+  imgEditWindowCloseEl.removeEventListener('click', closeImgEditWindow);
+  document.removeEventListener('keydown', onImgEditWindowEscPress);
+};
+
+var decrementImgScale = function () {
+  var currentScale = parseInt(scaleValueEl.value, 10);
+  if (currentScale > SCALE_MIN) {
+    currentScale -= SCALE_STEP;
+    setImgScale(imgUploadPreviewEl, currentScale, SCALE_MAX);
+  }
+};
+
+var incrementImgScale = function () {
+  var currentScale = parseInt(scaleValueEl.value, 10);
+  if (currentScale < SCALE_MAX) {
+    currentScale += SCALE_STEP;
+    setImgScale(imgUploadPreviewEl, currentScale, SCALE_MAX);
+  }
+};
+
+scaleDecrementEl.addEventListener('click', function () {
+  decrementImgScale();
+});
+
+scaleIncrementEl.addEventListener('click', function () {
+  incrementImgScale();
+});
+
+uploadFileEl.addEventListener('change', function () {
+  openImgEditWindow();
+});
+
+openImgEditWindow(); // запускаем окно редактирования для отладки
+
+
+// --------- эффекты
+var effectSelectorsEl = imgEditWindowEl.querySelectorAll('.effects__radio');
+
+var getFilterString = function (index, value) {
+  if (index) {
+    return FILTERS_TABLE[index].text + '(' + value + FILTERS_TABLE[index].unit + ')';
+  } else {
+    return 'none';
+  }
+};
+
+var onEffectSelectorsChange = function (el, index) {
+  el.addEventListener('click', function () {
+    imgUploadPreviewEl.style.filter = getFilterString(index, FILTERS_TABLE[index].max);
+
+  });
+};
+
+for (var i = 0; i < effectSelectorsEl.length; i++) {
+  onEffectSelectorsChange(effectSelectorsEl[i], i);
+}
