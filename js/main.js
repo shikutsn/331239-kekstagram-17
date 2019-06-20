@@ -13,45 +13,55 @@ var SCALE_MIN = 25;
 var SCALE_MAX = 100;
 var SCALE_STEP = 25;
 var SCALE_DEFAULT = 100;
+var SLIDER_PRECISION = 3;
+var SLIDER_DEFAULT_VALUE = 1;
+var SLIDER_DEFAULT_PERCENT = 100;
 
-var FILTERS_TABLE = [
-  {
-    text: 'none',
-    min: 0,
-    max: 0,
-    unit: ''
+var NO_EFFECT_KEY = 'effect-none';
+var FILTERS_TABLE = {
+  'effect-none': {
+    CLASS: 'effects__preview--none',
+    TEXT: 'none',
+    MIN: 0,
+    MAX: 0,
+    UNIT: ''
   },
-  {
-    text: 'grayscale',
-    min: 0,
-    max: 1,
-    unit: ''
+  'effect-chrome': {
+    CLASS: 'effects__preview--chrome',
+    TEXT: 'grayscale',
+    MIN: 0,
+    MAX: 1,
+    UNIT: ''
   },
-  {
-    text: 'sepia',
-    min: 0,
-    max: 1,
-    unit: ''
+  'effect-sepia': {
+    CLASS: 'effects__preview--sepia',
+    TEXT: 'sepia',
+    MIN: 0,
+    MAX: 1,
+    UNIT: ''
   },
-  {
-    text: 'invert',
-    min: 0,
-    max: 100,
-    unit: '%'
+  'effect-marvin': {
+    CLASS: 'effects__preview--marvin',
+    TEXT: 'invert',
+    MIN: 0,
+    MAX: 100,
+    UNIT: '%'
   },
-  {
-    text: 'blur',
-    min: 0,
-    max: 3,
-    unit: 'px'
+  'effect-phobos': {
+    CLASS: 'effects__preview--phobos',
+    TEXT: 'blur',
+    MIN: 0,
+    MAX: 3,
+    UNIT: 'px'
   },
-  {
-    text: 'brightness',
-    min: 1,
-    max: 3,
-    unit: ''
+  'effect-heat': {
+    CLASS: 'effects__preview--heat',
+    TEXT: 'brightness',
+    MIN: 1,
+    MAX: 3,
+    UNIT: ''
   }
-];
+};
 
 var COMMENTS = [
   'Всё отлично!',
@@ -156,10 +166,8 @@ var picturesEl = document.querySelector('.pictures');
 
 picturesEl.appendChild(fragment);
 
-
 // ------------------------------
 // Задание 7, подробности
-
 
 var uploadFileEl = document.querySelector('#upload-file');
 var imgEditWindowEl = document.querySelector('.img-upload__overlay');
@@ -168,6 +176,49 @@ var scaleValueEl = imgEditWindowEl.querySelector('.scale__control--value');
 var imgUploadPreviewEl = imgEditWindowEl.querySelector('.img-upload__preview img');
 var scaleDecrementEl = imgEditWindowEl.querySelector('.scale__control--smaller');
 var scaleIncrementEl = imgEditWindowEl.querySelector('.scale__control--bigger');
+var effectSelectorsEl = imgEditWindowEl.querySelectorAll('.effects__radio');
+var sliderEl = imgEditWindowEl.querySelector('.effect-level');
+var currentFilterKey = NO_EFFECT_KEY;
+var sliderPinEl = imgEditWindowEl.querySelector('.effect-level__pin');
+var sliderLineEl = imgEditWindowEl.querySelector('.effect-level__line');
+var sliderDepthEl = imgEditWindowEl.querySelector('.effect-level__depth');
+var sliderValueEl = imgEditWindowEl.querySelector('.effect-level__value');
+
+var getFilterValue = function (key, value) {
+  // превращает значение [0, 1] в корректный диапазон значений фильтра
+  return (FILTERS_TABLE[key].MAX - FILTERS_TABLE[key].MIN) * value + FILTERS_TABLE[key].MIN;
+};
+
+var setFilterIntensity = function (key, value) {
+  // value - из слайдера, из отрезка [0, 1]
+  if (key === NO_EFFECT_KEY) {
+    imgUploadPreviewEl.style.filter = FILTERS_TABLE[key].TEXT;
+  } else {
+    imgUploadPreviewEl.style.filter = FILTERS_TABLE[key].TEXT + '(' + getFilterValue(currentFilterKey, value) + FILTERS_TABLE[key].UNIT + ')';
+  }
+};
+
+var initEffectsControls = function (key) {
+  if (key === NO_EFFECT_KEY) {
+    sliderEl.style.visibility = 'hidden';
+  } else {
+    sliderEl.style.visibility = 'visible';
+  }
+
+  for (var i = 0; i < imgUploadPreviewEl.classList.length; i++) {
+    imgUploadPreviewEl.classList.remove(imgUploadPreviewEl.classList[i]);
+  }
+  imgUploadPreviewEl.classList.add(FILTERS_TABLE[key].CLASS);
+
+  setFilterIntensity(key, SLIDER_DEFAULT_VALUE);
+
+  sliderPinEl.style.left = SLIDER_DEFAULT_PERCENT + '%';
+  sliderDepthEl.style.width = SLIDER_DEFAULT_PERCENT + '%';
+  sliderValueEl.value = SLIDER_DEFAULT_PERCENT;
+  // это стремное ручное переключение из-за того, что в html чекнут последний радиобаттон,
+  // а форма открывается как будто чекнут первый. И в видео к заданию так же
+  imgEditWindowEl.querySelector('#' + currentFilterKey).checked = true;
+};
 
 var onImgEditWindowEscPress = function (evt) {
   if (evt.keyCode === ESC_KEYCODE) {
@@ -186,6 +237,7 @@ var openImgEditWindow = function () {
   document.addEventListener('keydown', onImgEditWindowEscPress);
   scaleValueEl.value = SCALE_DEFAULT + '%';
   setImgScale(imgUploadPreviewEl, SCALE_DEFAULT, SCALE_MAX);
+  initEffectsControls(currentFilterKey);
 };
 
 var closeImgEditWindow = function () {
@@ -223,27 +275,51 @@ uploadFileEl.addEventListener('change', function () {
   openImgEditWindow();
 });
 
-openImgEditWindow(); // запускаем окно редактирования для отладки
+// запускаем окно редактирования для отладки
+// openImgEditWindow();
 
-
-// --------- эффекты
-var effectSelectorsEl = imgEditWindowEl.querySelectorAll('.effects__radio');
-
-var getFilterString = function (index, value) {
-  if (index) {
-    return FILTERS_TABLE[index].text + '(' + value + FILTERS_TABLE[index].unit + ')';
-  } else {
-    return 'none';
-  }
-};
-
-var onEffectSelectorsChange = function (el, index) {
-  el.addEventListener('click', function () {
-    imgUploadPreviewEl.style.filter = getFilterString(index, FILTERS_TABLE[index].max);
-
+var onEffectRadiosChange = function (element) {
+  element.addEventListener('click', function () {
+    currentFilterKey = element.id;
+    initEffectsControls(currentFilterKey);
   });
 };
 
 for (var i = 0; i < effectSelectorsEl.length; i++) {
-  onEffectSelectorsChange(effectSelectorsEl[i], i);
+  onEffectRadiosChange(effectSelectorsEl[i]);
 }
+
+sliderPinEl.addEventListener('mousedown', function (evt) {
+  evt.preventDefault();
+
+  var startCoord = evt.clientX;
+
+  var onMouseMove = function (moveEvt) {
+    moveEvt.preventDefault();
+
+    var shiftCoord = startCoord - moveEvt.clientX;
+    startCoord = moveEvt.clientX;
+
+    var newCoord = sliderPinEl.offsetLeft - shiftCoord;
+
+    if (newCoord >= 0 && newCoord <= sliderLineEl.offsetWidth) {
+      sliderPinEl.style.left = newCoord + 'px';
+      sliderDepthEl.style.width = sliderPinEl.offsetLeft + 'px';
+    }
+
+    var sliderValue = (sliderPinEl.offsetLeft / sliderLineEl.offsetWidth).toFixed(SLIDER_PRECISION);
+    // записываем положение слайдера в процентах в скрытый инпут
+    sliderValueEl.value = Math.round(sliderValue * 100);
+    setFilterIntensity(currentFilterKey, sliderValue);
+  };
+
+  var onMouseUp = function (upEvt) {
+    upEvt.preventDefault();
+
+    document.removeEventListener('mousemove', onMouseMove);
+    document.removeEventListener('mouseup', onMouseUp);
+  };
+
+  document.addEventListener('mousemove', onMouseMove);
+  document.addEventListener('mouseup', onMouseUp);
+});
