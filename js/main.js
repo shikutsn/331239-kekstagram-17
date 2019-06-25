@@ -167,9 +167,6 @@ picturesEl.appendChild(fragment);
 
 // ------------------------------
 // Задание 7, подробности
-// currentFilterKey - хранит id радиобаттона, который является ключом в
-// массиве с фильтрами
-//
 
 var uploadFileEl = document.querySelector('#upload-file');
 var imgEditWindowEl = document.querySelector('.img-upload__overlay');
@@ -184,7 +181,7 @@ var sliderPinEl = imgEditWindowEl.querySelector('.effect-level__pin');
 var sliderLineEl = imgEditWindowEl.querySelector('.effect-level__line');
 var sliderDepthEl = imgEditWindowEl.querySelector('.effect-level__depth');
 var sliderValueEl = imgEditWindowEl.querySelector('.effect-level__value');
-var currentFilterKey;
+var currentFilterKey = NO_EFFECT_KEY;
 
 var getFilterValue = function (key, value) {
   // превращает значение [0, 1] в корректный диапазон значений фильтра
@@ -192,8 +189,6 @@ var getFilterValue = function (key, value) {
 };
 
 var getFilterIntensity = function (key, value) {
-  // выдает строку текста, которое надо записать в стиль фильтра.
-  // Основывается на value [0, 1] - позиция фильтра и ключе в базе фильтров
   if (key === NO_EFFECT_KEY) {
     return FILTERS_TABLE[key].TEXT;
   } else {
@@ -202,7 +197,6 @@ var getFilterIntensity = function (key, value) {
 };
 
 var setFilterIntensity = function (element, intensity) {
-  // записывает в свойство фильтр элемента element строку intensity
   element.style.filter = intensity;
 };
 
@@ -210,36 +204,25 @@ var setSliderValue = function (element, value) {
   element.value = value;
 };
 
-var initEffectsControls = function (key) {
-  // проверить логику этой инициализации
-  // а ведь она вызывается еще и при изменении радиокнопок
+var setSliderVisibility = function (element, key) {
   if (key === NO_EFFECT_KEY) {
-    sliderEl.style.visibility = 'hidden';
+    element.style.visibility = 'hidden';
   } else {
-    sliderEl.style.visibility = 'visible';
+    element.style.visibility = 'visible';
   }
+};
 
-  for (var i = 0; i < imgUploadPreviewEl.classList.length; i++) {
-    imgUploadPreviewEl.classList.remove(imgUploadPreviewEl.classList[i]);
-  }
+var initEffectsControls = function (key) {
+  imgUploadPreviewEl.className = '';
   imgUploadPreviewEl.classList.add(FILTERS_TABLE[key].CLASS);
-
-  // Вадим советует, раз уж вся функция работает с ДОМ, выкинуть или как-то
-  // видоизменить вызов этой функции (типа того, как сейчас сделано)
-  // setFilterIntensity(imgUploadPreviewEl, getFilterIntensity(key, SLIDER_DEFAULT_VALUE));
   imgUploadPreviewEl.style.filter = getFilterIntensity(key, SLIDER_DEFAULT_VALUE);
 
   sliderPinEl.style.left = SLIDER_DEFAULT_PERCENT + '%';
   sliderDepthEl.style.width = SLIDER_DEFAULT_PERCENT + '%';
+  setSliderVisibility(sliderEl, key);
+  sliderValueEl.value = SLIDER_DEFAULT_PERCENT;
 
-  // или оставить прямую манипуляцию с ДОМ? но дальше же есть снова апдейт поля,
-  // которое хранит текущее состояние слайдера
-  setSliderValue(sliderValueEl, SLIDER_DEFAULT_PERCENT);
-  // sliderValueEl.value = SLIDER_DEFAULT_PERCENT;
-
-  // это стремное ручное переключение из-за того, что в html чекнут последний радиобаттон,
-  // а форма открывается как будто чекнут первый. И в видео к заданию так же
-  imgEditWindowEl.querySelector('#' + currentFilterKey).checked = true;
+  imgEditWindowEl.querySelector('#' + key).checked = true;
 };
 
 var onImgEditWindowEscPress = function (evt) {
@@ -252,25 +235,19 @@ var updateScaleValueStorage = function (element, value) {
   element.value = value + '%';
 };
 
-var setImgScale = function (imgEl, scale, scaleMax) {
-  imgEl.style.transform = 'scale(' + scale / scaleMax + ')';
+var setImgScale = function (element, scale, scaleMax) {
+  element.style.transform = 'scale(' + scale / scaleMax + ')';
 };
 
 var openImgEditWindow = function () {
-  // не должно быть логики кроме как работы с DOM?
-  // вынести инициализацию переменных в другую функцию?
-  // а лучше тут оставить инициализацию переменных, а сделать другую функцию,
-  // в которой будут манипуляции с ДОМ
   imgEditWindowEl.classList.remove('hidden');
   imgEditWindowCloseEl.addEventListener('click', closeImgEditWindow);
   document.addEventListener('keydown', onImgEditWindowEscPress);
 
-  // scaleValueEl.value = SCALE_DEFAULT + '%';
   setImgScale(imgUploadPreviewEl, SCALE_DEFAULT, SCALE_MAX);
   updateScaleValueStorage(scaleValueEl, SCALE_DEFAULT);
 
-
-  currentFilterKey = NO_EFFECT_KEY; // при открытии сбрасываемся на дефолт фильтр
+  currentFilterKey = NO_EFFECT_KEY;
   initEffectsControls(currentFilterKey);
 };
 
@@ -281,15 +258,15 @@ var closeImgEditWindow = function () {
   document.removeEventListener('keydown', onImgEditWindowEscPress);
 };
 
-var getCurrentImgScale = function (scaleStorage) {
-  return parseInt(scaleStorage.value, 10);
+var getCurrentImgScale = function (element) {
+  return parseInt(element.value, 10);
 };
 
 var decrementImgScale = function () {
   var currentScale = getCurrentImgScale(scaleValueEl);
   if (currentScale > SCALE_MIN) {
     setImgScale(imgUploadPreviewEl, currentScale - SCALE_STEP, SCALE_MAX);
-    updateScaleValueStorage(scaleValueEl, currentScale);
+    updateScaleValueStorage(scaleValueEl, currentScale - SCALE_STEP);
   }
 };
 
@@ -297,50 +274,34 @@ var incrementImgScale = function () {
   var currentScale = getCurrentImgScale(scaleValueEl);
   if (currentScale < SCALE_MAX) {
     setImgScale(imgUploadPreviewEl, currentScale + SCALE_STEP, SCALE_MAX);
-    updateScaleValueStorage(scaleValueEl, currentScale);
+    updateScaleValueStorage(scaleValueEl, currentScale + SCALE_STEP);
   }
 };
 
-scaleDecrementEl.addEventListener('click', function () {
-  decrementImgScale();
-});
+scaleDecrementEl.addEventListener('click', decrementImgScale);
+scaleIncrementEl.addEventListener('click', incrementImgScale);
 
-scaleIncrementEl.addEventListener('click', function () {
-  incrementImgScale();
-});
+uploadFileEl.addEventListener('change', openImgEditWindow);
 
-uploadFileEl.addEventListener('change', function () {
-  openImgEditWindow();
-});
-
-var addEffectsChangeListener = function (element) {
-  element.addEventListener('click', function () {
-    currentFilterKey = element.id;
-    // разобраться с этим init.
-    initEffectsControls(currentFilterKey);
-  });
+var addEffectsChangeListeners = function (effectsEl) {
+  for (var i = 0; i < effectsEl.length; i++) {
+    (function (j) {
+      effectsEl[j].addEventListener('click', function () {
+        currentFilterKey = effectsEl[j].id;
+        initEffectsControls(currentFilterKey);
+      });
+    })(i);
+  }
 };
 
-for (var i = 0; i < effectSelectorsEl.length; i++) {
-  addEffectsChangeListener(effectSelectorsEl[i]);
-}
+addEffectsChangeListeners(effectSelectorsEl);
 
-// так предлагал сделать Вадим, но тут же замыкание
-// var addEffectsChangeListeners = function (effectsEl) {
-//   for (var i = 0; i < effectsEl.length; i++) {
-//     effectsEl[i].addEventListener('click', function () {
-//       currentFilterKey = effectsEl[i].id;
-//       initEffectsControls(currentFilterKey);
-//     });
-//   }
-// };
-//
-// addEffectsChangeListeners(effectSelectorsEl);
 
 sliderPinEl.addEventListener('mousedown', function (evt) {
   var startCoord = evt.clientX;
 
   var onMouseMove = function (moveEvt) {
+    moveEvt.preventDefault();
 
     var shiftCoord = startCoord - moveEvt.clientX;
     startCoord = moveEvt.clientX;
@@ -354,10 +315,7 @@ sliderPinEl.addEventListener('mousedown', function (evt) {
 
     var sliderValue = (sliderPinEl.offsetLeft / sliderLineEl.offsetWidth).toFixed(SLIDER_PRECISION);
 
-    // записываем положение слайдера в процентах в скрытый инпут
     setSliderValue(sliderValueEl, Math.round(sliderValue * 100));
-    // sliderValueEl.value = Math.round(sliderValue * 100);
-
     setFilterIntensity(imgUploadPreviewEl, getFilterIntensity(currentFilterKey, sliderValue));
   };
 
@@ -369,6 +327,3 @@ sliderPinEl.addEventListener('mousedown', function (evt) {
   document.addEventListener('mousemove', onMouseMove);
   document.addEventListener('mouseup', onMouseUp);
 });
-
-// запускаем окно редактирования для отладки
-openImgEditWindow();
