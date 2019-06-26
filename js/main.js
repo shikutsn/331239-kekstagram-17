@@ -189,11 +189,7 @@ var getFilterValue = function (key, value) {
 };
 
 var getFilterIntensity = function (key, value) {
-  if (key === NO_EFFECT_KEY) {
-    return FILTERS_TABLE[key].TEXT;
-  } else {
-    return FILTERS_TABLE[key].TEXT + '(' + getFilterValue(currentFilterKey, value) + FILTERS_TABLE[key].UNIT + ')';
-  }
+  return key === NO_EFFECT_KEY ? FILTERS_TABLE[key].TEXT : FILTERS_TABLE[key].TEXT + '(' + getFilterValue(currentFilterKey, value) + FILTERS_TABLE[key].UNIT + ')';
 };
 
 var setFilterIntensity = function (element, intensity) {
@@ -205,11 +201,7 @@ var setSliderValue = function (element, value) {
 };
 
 var setSliderVisibility = function (element, key) {
-  if (key === NO_EFFECT_KEY) {
-    element.style.visibility = 'hidden';
-  } else {
-    element.style.visibility = 'visible';
-  }
+  key === NO_EFFECT_KEY ? element.style.visibility = 'hidden' : element.style.visibility = 'visible';
 };
 
 var initEffectsControls = function (key) {
@@ -262,36 +254,38 @@ var getCurrentImgScale = function (element) {
   return parseInt(element.value, 10);
 };
 
-var decrementImgScale = function () {
-  var currentScale = getCurrentImgScale(scaleValueEl);
+var decrementImgScale = function (imageEl, valueEl) {
+  var currentScale = getCurrentImgScale(valueEl);
   if (currentScale > SCALE_MIN) {
-    setImgScale(imgUploadPreviewEl, currentScale - SCALE_STEP, SCALE_MAX);
-    updateScaleValueStorage(scaleValueEl, currentScale - SCALE_STEP);
+    setImgScale(imageEl, currentScale - SCALE_STEP, SCALE_MAX);
+    updateScaleValueStorage(valueEl, currentScale - SCALE_STEP);
   }
 };
 
-var incrementImgScale = function () {
-  var currentScale = getCurrentImgScale(scaleValueEl);
+var incrementImgScale = function (imageEl, valueEl) {
+  var currentScale = getCurrentImgScale(valueEl);
   if (currentScale < SCALE_MAX) {
-    setImgScale(imgUploadPreviewEl, currentScale + SCALE_STEP, SCALE_MAX);
-    updateScaleValueStorage(scaleValueEl, currentScale + SCALE_STEP);
+    setImgScale(imageEl, currentScale + SCALE_STEP, SCALE_MAX);
+    updateScaleValueStorage(valueEl, currentScale + SCALE_STEP);
   }
 };
 
-scaleDecrementEl.addEventListener('click', decrementImgScale);
-scaleIncrementEl.addEventListener('click', incrementImgScale);
+scaleDecrementEl.addEventListener('click', function () {
+  decrementImgScale(imgUploadPreviewEl, scaleValueEl);
+});
+scaleIncrementEl.addEventListener('click', function () {
+ incrementImgScale(imgUploadPreviewEl, scaleValueEl);
+});
 
 uploadFileEl.addEventListener('change', openImgEditWindow);
 
 var addEffectsChangeListeners = function (effectsEl) {
-  for (var i = 0; i < effectsEl.length; i++) {
-    (function (j) {
-      effectsEl[j].addEventListener('click', function () {
-        currentFilterKey = effectsEl[j].id;
-        initEffectsControls(currentFilterKey);
-      });
-    })(i);
-  }
+  effectsEl.forEach(function (item) {
+    item.addEventListener('click', function () {
+      currentFilterKey = item.id;
+      initEffectsControls(currentFilterKey);
+    });
+  });
 };
 
 addEffectsChangeListeners(effectSelectorsEl);
