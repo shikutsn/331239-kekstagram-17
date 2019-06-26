@@ -201,7 +201,10 @@ var setSliderValue = function (element, value) {
 };
 
 var setSliderVisibility = function (element, key) {
-  key === NO_EFFECT_KEY ? element.style.visibility = 'hidden' : element.style.visibility = 'visible';
+  if (key === NO_EFFECT_KEY) {
+    element.style.visibility = 'hidden';
+  }
+  element.style.visibility = 'visible';
 };
 
 var initEffectsControls = function (key) {
@@ -274,7 +277,7 @@ scaleDecrementEl.addEventListener('click', function () {
   decrementImgScale(imgUploadPreviewEl, scaleValueEl);
 });
 scaleIncrementEl.addEventListener('click', function () {
- incrementImgScale(imgUploadPreviewEl, scaleValueEl);
+  incrementImgScale(imgUploadPreviewEl, scaleValueEl);
 });
 
 uploadFileEl.addEventListener('change', openImgEditWindow);
