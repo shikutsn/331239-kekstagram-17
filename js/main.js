@@ -201,10 +201,7 @@ var setSliderValue = function (element, value) {
 };
 
 var setSliderVisibility = function (element, key) {
-  if (key === NO_EFFECT_KEY) {
-    element.style.visibility = 'hidden';
-  }
-  element.style.visibility = 'visible';
+  (key === NO_EFFECT_KEY) ? element.style.visibility = 'hidden' : element.style.visibility = 'visible';
 };
 
 var initEffectsControls = function (key) {
