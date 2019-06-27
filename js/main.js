@@ -17,6 +17,7 @@ var SLIDER_DEFAULT_VALUE = 1;
 var SLIDER_DEFAULT_PERCENT = 100;
 
 var NO_EFFECT_KEY = 'effect-none';
+var DATA_EFFECT = 'data-effect';
 var FILTERS_TABLE = {
   'effect-none': {
     CLASS: 'effects__preview--none',
@@ -181,7 +182,6 @@ var sliderPinEl = imgEditWindowEl.querySelector('.effect-level__pin');
 var sliderLineEl = imgEditWindowEl.querySelector('.effect-level__line');
 var sliderDepthEl = imgEditWindowEl.querySelector('.effect-level__depth');
 var sliderValueEl = imgEditWindowEl.querySelector('.effect-level__value');
-var currentFilterKey = NO_EFFECT_KEY;
 
 var getFilterValue = function (key, value) {
   // превращает значение [0, 1] в корректный диапазон значений фильтра
@@ -189,19 +189,11 @@ var getFilterValue = function (key, value) {
 };
 
 var getFilterIntensity = function (key, value) {
-  return key === NO_EFFECT_KEY ? FILTERS_TABLE[key].TEXT : FILTERS_TABLE[key].TEXT + '(' + getFilterValue(currentFilterKey, value) + FILTERS_TABLE[key].UNIT + ')';
+  return key === NO_EFFECT_KEY ? FILTERS_TABLE[key].TEXT : FILTERS_TABLE[key].TEXT + '(' + getFilterValue(key, value) + FILTERS_TABLE[key].UNIT + ')';
 };
 
-var setFilterIntensity = function (element, intensity) {
-  element.style.filter = intensity;
-};
-
-var setSliderValue = function (element, value) {
-  element.value = value;
-};
-
-var setSliderVisibility = function (element, key) {
-  element.style.visibility = (key === NO_EFFECT_KEY) ? 'hidden' : 'visible';
+var getSliderVisibilityText = function (key) {
+  return (key === NO_EFFECT_KEY) ? 'hidden' : 'visible';
 };
 
 var initEffectsControls = function (key) {
@@ -211,7 +203,7 @@ var initEffectsControls = function (key) {
 
   sliderPinEl.style.left = SLIDER_DEFAULT_PERCENT + '%';
   sliderDepthEl.style.width = SLIDER_DEFAULT_PERCENT + '%';
-  setSliderVisibility(sliderEl, key);
+  sliderEl.style.visibility = getSliderVisibilityText(key);
   sliderValueEl.value = SLIDER_DEFAULT_PERCENT;
 
   imgEditWindowEl.querySelector('#' + key).checked = true;
@@ -223,12 +215,8 @@ var onImgEditWindowEscPress = function (evt) {
   }
 };
 
-var updateScaleValueStorage = function (element, value) {
-  element.value = value + '%';
-};
-
-var setImgScale = function (element, scale, scaleMax) {
-  element.style.transform = 'scale(' + scale / scaleMax + ')';
+var getImgScaleText = function (scale, scaleMax) {
+  return 'scale(' + scale / scaleMax + ')';
 };
 
 var openImgEditWindow = function () {
@@ -236,11 +224,11 @@ var openImgEditWindow = function () {
   imgEditWindowCloseEl.addEventListener('click', closeImgEditWindow);
   document.addEventListener('keydown', onImgEditWindowEscPress);
 
-  setImgScale(imgUploadPreviewEl, SCALE_DEFAULT, SCALE_MAX);
-  updateScaleValueStorage(scaleValueEl, SCALE_DEFAULT);
+  imgUploadPreviewEl.style.transform = getImgScaleText(SCALE_DEFAULT, SCALE_MAX);
+  scaleValueEl.value = SCALE_DEFAULT + '%';
 
-  currentFilterKey = NO_EFFECT_KEY;
-  initEffectsControls(currentFilterKey);
+  imgUploadPreviewEl.setAttribute(DATA_EFFECT, NO_EFFECT_KEY);
+  initEffectsControls(NO_EFFECT_KEY);
 };
 
 var closeImgEditWindow = function () {
@@ -257,16 +245,16 @@ var getCurrentImgScale = function (element) {
 var decrementImgScale = function (imageEl, valueEl) {
   var currentScale = getCurrentImgScale(valueEl);
   if (currentScale > SCALE_MIN) {
-    setImgScale(imageEl, currentScale - SCALE_STEP, SCALE_MAX);
-    updateScaleValueStorage(valueEl, currentScale - SCALE_STEP);
+    imageEl.style.transform = getImgScaleText(currentScale - SCALE_STEP, SCALE_MAX);
+    valueEl.value = currentScale - SCALE_STEP + '%';
   }
 };
 
 var incrementImgScale = function (imageEl, valueEl) {
   var currentScale = getCurrentImgScale(valueEl);
   if (currentScale < SCALE_MAX) {
-    setImgScale(imageEl, currentScale + SCALE_STEP, SCALE_MAX);
-    updateScaleValueStorage(valueEl, currentScale + SCALE_STEP);
+    imageEl.style.transform = getImgScaleText(currentScale + SCALE_STEP, SCALE_MAX);
+    valueEl.value = currentScale + SCALE_STEP + '%';
   }
 };
 
@@ -282,8 +270,8 @@ uploadFileEl.addEventListener('change', openImgEditWindow);
 var addEffectsChangeListeners = function (effectsEl) {
   effectsEl.forEach(function (item) {
     item.addEventListener('click', function () {
-      currentFilterKey = item.id;
-      initEffectsControls(currentFilterKey);
+      imgUploadPreviewEl.setAttribute(DATA_EFFECT, item.id);
+      initEffectsControls(item.id);
     });
   });
 };
@@ -309,8 +297,9 @@ sliderPinEl.addEventListener('mousedown', function (evt) {
 
     var sliderValue = (sliderPinEl.offsetLeft / sliderLineEl.offsetWidth).toFixed(SLIDER_PRECISION);
 
-    setSliderValue(sliderValueEl, Math.round(sliderValue * 100));
-    setFilterIntensity(imgUploadPreviewEl, getFilterIntensity(currentFilterKey, sliderValue));
+    sliderValueEl.value = Math.round(sliderValue * 100);
+    var currentFilter = imgUploadPreviewEl.getAttribute(DATA_EFFECT);
+    imgUploadPreviewEl.style.filter = getFilterIntensity(currentFilter, sliderValue);
   };
 
   var onMouseUp = function () {
