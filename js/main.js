@@ -183,6 +183,8 @@ var sliderLineEl = imgEditWindowEl.querySelector('.effect-level__line');
 var sliderDepthEl = imgEditWindowEl.querySelector('.effect-level__depth');
 var sliderValueEl = imgEditWindowEl.querySelector('.effect-level__value');
 
+var commentEl = imgEditWindowEl.querySelector('.text__description');
+
 var getFilterValue = function (key, value) {
   // превращает значение [0, 1] в корректный диапазон значений фильтра
   return (FILTERS_TABLE[key].MAX - FILTERS_TABLE[key].MIN) * value + FILTERS_TABLE[key].MIN;
@@ -193,7 +195,7 @@ var getFilterIntensity = function (key, value) {
 };
 
 var getSliderVisibilityText = function (key) {
-  return (key === NO_EFFECT_KEY) ? 'hidden' : 'visible';
+  return key === NO_EFFECT_KEY ? 'hidden' : 'visible';
 };
 
 var applyEffect = function (key) {
@@ -210,7 +212,7 @@ var applyEffect = function (key) {
 };
 
 var onImgEditWindowEscPress = function (evt) {
-  if (evt.keyCode === ESC_KEYCODE) {
+  if (evt.keyCode === ESC_KEYCODE && document.activeElement !== commentEl) {
     closeImgEditWindow();
   }
 };
@@ -314,3 +316,8 @@ sliderPinEl.addEventListener('mousedown', function (evt) {
   document.addEventListener('mousemove', onMouseMove);
   document.addEventListener('mouseup', onMouseUp);
 });
+
+// ------------------------------
+// Задание 8. Валидация форм
+
+commentEl.setAttribute('maxlength', 140);
