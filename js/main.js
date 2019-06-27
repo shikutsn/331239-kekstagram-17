@@ -320,4 +320,32 @@ sliderPinEl.addEventListener('mousedown', function (evt) {
 // ------------------------------
 // Задание 8. Валидация форм
 
-commentEl.setAttribute('maxlength', 140);
+// commentEl.setAttribute('maxlength', 140);
+
+
+commentEl.addEventListener('invalid', function (evt) {
+  // if (commentEl.validity.tooLong) {
+  //   commentEl.setCustomValidity('Не больше 140 символов');
+  // } else {
+  //   commentEl.setCustomValidity('');
+  // }
+  var target = evt.target;
+  if (target.value.length > 140) {
+    target.setCustomValidity('Не больше 140 символов. Сейчас символов: ' + target.value.length);
+  } else {
+    target.setCustomValidity('');
+  }
+});
+
+commentEl.addEventListener('input', function (evt) {
+  var event = new Event('invalid');
+  evt.target.dispatchEvent(event);
+
+  // var target = evt.target;
+  // if (target.value.length > 140) {
+  //   target.setCustomValidity('Не больше 140 символов. Сейчас символов: ' + target.value.length);
+  // } else {
+  //   target.setCustomValidity('');
+  // }
+  console.log('input has fired');
+});
