@@ -196,7 +196,7 @@ var getSliderVisibilityText = function (key) {
   return (key === NO_EFFECT_KEY) ? 'hidden' : 'visible';
 };
 
-var initEffectsControls = function (key) {
+var applyEffect = function (key) {
   imgUploadPreviewEl.className = '';
   imgUploadPreviewEl.classList.add(FILTERS_TABLE[key].CLASS);
   imgUploadPreviewEl.style.filter = getFilterIntensity(key, SLIDER_DEFAULT_VALUE);
@@ -215,7 +215,7 @@ var onImgEditWindowEscPress = function (evt) {
   }
 };
 
-var getImgScaleText = function (scale, scaleMax) {
+var getImgScaleValue = function (scale, scaleMax) {
   return 'scale(' + scale / scaleMax + ')';
 };
 
@@ -224,11 +224,11 @@ var openImgEditWindow = function () {
   imgEditWindowCloseEl.addEventListener('click', closeImgEditWindow);
   document.addEventListener('keydown', onImgEditWindowEscPress);
 
-  imgUploadPreviewEl.style.transform = getImgScaleText(SCALE_DEFAULT, SCALE_MAX);
+  imgUploadPreviewEl.style.transform = getImgScaleValue(SCALE_DEFAULT, SCALE_MAX);
   scaleValueEl.value = SCALE_DEFAULT + '%';
 
   imgUploadPreviewEl.setAttribute(DATA_EFFECT, NO_EFFECT_KEY);
-  initEffectsControls(NO_EFFECT_KEY);
+  applyEffect(NO_EFFECT_KEY);
 };
 
 var closeImgEditWindow = function () {
@@ -245,7 +245,7 @@ var getCurrentImgScale = function (element) {
 var decrementImgScale = function (imageEl, valueEl) {
   var currentScale = getCurrentImgScale(valueEl);
   if (currentScale > SCALE_MIN) {
-    imageEl.style.transform = getImgScaleText(currentScale - SCALE_STEP, SCALE_MAX);
+    imageEl.style.transform = getImgScaleValue(currentScale - SCALE_STEP, SCALE_MAX);
     valueEl.value = currentScale - SCALE_STEP + '%';
   }
 };
@@ -253,7 +253,7 @@ var decrementImgScale = function (imageEl, valueEl) {
 var incrementImgScale = function (imageEl, valueEl) {
   var currentScale = getCurrentImgScale(valueEl);
   if (currentScale < SCALE_MAX) {
-    imageEl.style.transform = getImgScaleText(currentScale + SCALE_STEP, SCALE_MAX);
+    imageEl.style.transform = getImgScaleValue(currentScale + SCALE_STEP, SCALE_MAX);
     valueEl.value = currentScale + SCALE_STEP + '%';
   }
 };
@@ -271,7 +271,7 @@ var addEffectsChangeListeners = function (effectsEl) {
   effectsEl.forEach(function (item) {
     item.addEventListener('click', function () {
       imgUploadPreviewEl.setAttribute(DATA_EFFECT, item.id);
-      initEffectsControls(item.id);
+      applyEffect(item.id);
     });
   });
 };
@@ -280,20 +280,24 @@ addEffectsChangeListeners(effectSelectorsEl);
 
 
 sliderPinEl.addEventListener('mousedown', function (evt) {
-  var startCoord = evt.clientX;
+  var startX = evt.clientX;
+  var sliderPinLeftX = sliderPinEl.offsetLeft;
 
   var onMouseMove = function (moveEvt) {
     moveEvt.preventDefault();
 
-    var shiftCoord = startCoord - moveEvt.clientX;
-    startCoord = moveEvt.clientX;
+    var shiftX = startX - moveEvt.clientX;
+    sliderPinLeftX = sliderPinLeftX - shiftX;
+    startX = moveEvt.clientX;
 
-    var newCoord = sliderPinEl.offsetLeft - shiftCoord;
-
-    if (newCoord >= 0 && newCoord <= sliderLineEl.offsetWidth) {
-      sliderPinEl.style.left = newCoord + 'px';
-      sliderDepthEl.style.width = sliderPinEl.offsetLeft + 'px';
+    if (sliderPinLeftX < 0) {
+      sliderPinEl.style.left = 0;
+    } else if (sliderPinLeftX > sliderLineEl.offsetWidth) {
+      sliderPinEl.style.left = sliderLineEl.offsetWidth;
+    } else {
+      sliderPinEl.style.left = sliderPinLeftX + 'px';
     }
+    sliderDepthEl.style.width = sliderPinEl.offsetLeft + 'px';
 
     var sliderValue = (sliderPinEl.offsetLeft / sliderLineEl.offsetWidth).toFixed(SLIDER_PRECISION);
 
