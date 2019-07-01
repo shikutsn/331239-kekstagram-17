@@ -320,32 +320,18 @@ sliderPinEl.addEventListener('mousedown', function (evt) {
 // ------------------------------
 // Задание 8. Валидация форм
 
-// commentEl.setAttribute('maxlength', 140);
+var imgUploadForm = document.querySelector('.img-upload__form');
 
-
-commentEl.addEventListener('invalid', function (evt) {
-  // if (commentEl.validity.tooLong) {
-  //   commentEl.setCustomValidity('Не больше 140 символов');
-  // } else {
-  //   commentEl.setCustomValidity('');
-  // }
-  var target = evt.target;
-  if (target.value.length > 140) {
-    target.setCustomValidity('Не больше 140 символов. Сейчас символов: ' + target.value.length);
-  } else {
-    target.setCustomValidity('');
+var isCommentValid = function () {
+  commentEl.setCustomValidity('');
+  commentEl.style.border = 'none';
+  if (commentEl.value.length > 140) {
+    commentEl.setCustomValidity('Не больше 140 символов. Сейчас символов: ' + commentEl.value.length);
+    commentEl.style.border = '2px solid red';
   }
-});
 
-commentEl.addEventListener('input', function (evt) {
-  var event = new Event('invalid');
-  evt.target.dispatchEvent(event);
+};
 
-  // var target = evt.target;
-  // if (target.value.length > 140) {
-  //   target.setCustomValidity('Не больше 140 символов. Сейчас символов: ' + target.value.length);
-  // } else {
-  //   target.setCustomValidity('');
-  // }
-  console.log('input has fired');
-});
+imgUploadForm.addEventListener('submit', isCommentValid);
+commentEl.addEventListener('invalid', isCommentValid);
+commentEl.addEventListener('input', isCommentValid);
