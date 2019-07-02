@@ -320,50 +320,33 @@ sliderPinEl.addEventListener('mousedown', function (evt) {
 // ------------------------------
 // Задание 8. Валидация форм
 
-// все равно вариант с разделенными функциями не фурычит. Почему?
-// да и плюс еще надо же вынести магические числа и сообщения в константы
-// события сейчас вызываются не теми элементами
+var COMMENT_FIELD = {
+  MAX_LENGTH: 140,
+  VALIDITY_STYLE: 'outline',
+  INVALID_STYLE: '3px solid red',
+  VALID_STYLE: 'none'
+};
+COMMENT_FIELD.INVALID_TEXT = 'Не больше ' + COMMENT_FIELD.MAX_LENGTH + ' символов.';
 
 var imgUploadForm = document.querySelector('.img-upload__form');
 
-// var isCommentValid = function () {
-//   commentEl.setCustomValidity('');
-//   commentEl.style.border = 'none';
-//   if (commentEl.value.length > 140) {
-//     commentEl.setCustomValidity('Не больше 140 символов. Сейчас символов: ' + commentEl.value.length);
-//     commentEl.style.border = '2px solid red';
-//   }
-// };
-
 var isCommentFieldValid = function (commentField) {
-  return commentField.value.length > 140 ? false : true;
+  return commentField.value.length <= COMMENT_FIELD.MAX_LENGTH ? true : false;
 };
 
-var validateCommentField = function (commentField) {
-  if (!isCommentFieldValid(commentField)) {
-    commentField.setCustomValidity('Не больше 140 символов. Сейчас символов: ' + commentField.value.length);
-    commentEl.style.border = '2px solid red';
-  }
-};
-
-var resetCommentField = function (commentField) {
-  if (isCommentFieldValid(commentField)) {
+var setCommentFieldState = function (commentField, isValid) {
+  if (isValid) {
     commentEl.setCustomValidity('');
-    commentEl.style.border = 'none';
+    commentEl.style[COMMENT_FIELD.VALIDITY_STYLE] = COMMENT_FIELD.VALID_STYLE;
+  } else {
+    commentEl.setCustomValidity(COMMENT_FIELD.INVALID_TEXT);
+    commentEl.style[COMMENT_FIELD.VALIDITY_STYLE] = COMMENT_FIELD.INVALID_STYLE;
   }
 };
 
-imgUploadForm.addEventListener('submit', function (evt) {
-   validateCommentField(evt.target);
-});
+var validateCommentField = function () {
+  setCommentFieldState(commentEl, isCommentFieldValid(commentEl));
+};
 
-commentEl.addEventListener('input', function (evt) {
-  console.log(evt.target.value.length);
-  if (isCommentFieldValid(evt.target)) {
-    resetCommentField(evt.target);
-  }
-});
-
-
-// imgUploadForm.addEventListener('submit', isCommentValid);
-// commentEl.addEventListener('input', isCommentValid);
+imgUploadForm.addEventListener('submit', validateCommentField);
+commentEl.addEventListener('input', validateCommentField);
