@@ -320,18 +320,50 @@ sliderPinEl.addEventListener('mousedown', function (evt) {
 // ------------------------------
 // Задание 8. Валидация форм
 
+// все равно вариант с разделенными функциями не фурычит. Почему?
+// да и плюс еще надо же вынести магические числа и сообщения в константы
+// события сейчас вызываются не теми элементами
+
 var imgUploadForm = document.querySelector('.img-upload__form');
 
-var isCommentValid = function () {
-  commentEl.setCustomValidity('');
-  commentEl.style.border = 'none';
-  if (commentEl.value.length > 140) {
-    commentEl.setCustomValidity('Не больше 140 символов. Сейчас символов: ' + commentEl.value.length);
-    commentEl.style.border = '2px solid red';
-  }
+// var isCommentValid = function () {
+//   commentEl.setCustomValidity('');
+//   commentEl.style.border = 'none';
+//   if (commentEl.value.length > 140) {
+//     commentEl.setCustomValidity('Не больше 140 символов. Сейчас символов: ' + commentEl.value.length);
+//     commentEl.style.border = '2px solid red';
+//   }
+// };
 
+var isCommentFieldValid = function (commentField) {
+  return commentField.value.length > 140 ? false : true;
 };
 
-imgUploadForm.addEventListener('submit', isCommentValid);
-commentEl.addEventListener('invalid', isCommentValid);
-commentEl.addEventListener('input', isCommentValid);
+var validateCommentField = function (commentField) {
+  if (!isCommentFieldValid(commentField)) {
+    commentField.setCustomValidity('Не больше 140 символов. Сейчас символов: ' + commentField.value.length);
+    commentEl.style.border = '2px solid red';
+  }
+};
+
+var resetCommentField = function (commentField) {
+  if (isCommentFieldValid(commentField)) {
+    commentEl.setCustomValidity('');
+    commentEl.style.border = 'none';
+  }
+};
+
+imgUploadForm.addEventListener('submit', function (evt) {
+   validateCommentField(evt.target);
+});
+
+commentEl.addEventListener('input', function (evt) {
+  console.log(evt.target.value.length);
+  if (isCommentFieldValid(evt.target)) {
+    resetCommentField(evt.target);
+  }
+});
+
+
+// imgUploadForm.addEventListener('submit', isCommentValid);
+// commentEl.addEventListener('input', isCommentValid);
