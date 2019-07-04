@@ -1,10 +1,5 @@
 'use strict';
 
-var PHOTOS_COUNT = 25;
-var COMMENTS_MAX_COUNT = 2;
-var AVATARS_COUNT = 6;
-var LIKES_MIN_COUNT = 15;
-var LIKES_MAX_COUNT = 200;
 
 var ESC_KEYCODE = 27;
 
@@ -63,114 +58,18 @@ var FILTERS_TABLE = {
   }
 };
 
-var COMMENTS = [
-  'Всё отлично!',
-  'В целом всё неплохо. Но не всё.',
-  'Когда вы делаете фотографию, хорошо бы убирать палец из кадра. В конце концов это просто непрофессионально.',
-  'Моя бабушка случайно чихнула с фотоаппаратом в руках и у неё получилась фотография лучше.',
-  'Я поскользнулся на банановой кожуре и уронил фотоаппарат на кота и у меня получилась фотография лучше.',
-  'Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!'
-];
-
-var NAMES = [
-  'Артём',
-  'Сергей',
-  'Всеволод',
-  'Александр',
-  'Леонид',
-  'Пётр',
-  'Демьян',
-  'Гаррий',
-  'Михал',
-  'Олег',
-  'Юлия',
-  'Ксения',
-  'Ирина',
-  'Татьяна',
-  'Александра',
-  'Марфа',
-  'Ольга',
-  'Наталья',
-  'Виктория',
-  'Евгения'
-];
-
-var getRandomNumber = function (min, max) {
-  // случайное целое число из полуинтервала [min, max)
-  return Math.floor(Math.random() * (max - min)) + min;
-};
-
-var getRandomArrayElement = function (arr) {
-  return arr[getRandomNumber(0, arr.length)];
-};
-
-var getRandomComment = function (quantity) {
-  var comments = [];
-
-  for (var j = 0; j < quantity; j++) {
-    comments.push({
-      avatar: 'img/avatar-' + getRandomNumber(1, AVATARS_COUNT + 1) + '.svg',
-      message: getRandomArrayElement(COMMENTS),
-      name: getRandomArrayElement(NAMES)
-    });
-  }
-
-  return comments;
-};
-
-var getRandomPhoto = function (index) {
-  return {
-    url: 'photos/' + index + '.jpg',
-    likes: getRandomNumber(LIKES_MIN_COUNT, LIKES_MAX_COUNT),
-    comments: getRandomComment(getRandomNumber(1, COMMENTS_MAX_COUNT + 1))
-  };
-};
-
-var getPhotos = function (quantity) {
-  var output = [];
-
-  for (var i = 1; i <= quantity; i++) {
-    output.push(getRandomPhoto(i));
-  }
-
-  return output;
-};
-
-var renderPicture = function (photo, template) {
-  var pictureElement = template.cloneNode(true);
-
-  pictureElement.querySelector('.picture__img').src = photo.url;
-  pictureElement.querySelector('.picture__likes').textContent = photo.likes;
-  pictureElement.querySelector('.picture__comments').textContent = photo.comments.length;
-
-  return pictureElement;
-};
-
-var fillFragment = function (photosList, template) {
-  var fragment = document.createDocumentFragment();
-
-  for (var i = 0; i < photosList.length; i++) {
-    fragment.appendChild(renderPicture(photosList[i], template));
-  }
-
-  return fragment;
-};
-
-
-var photos = getPhotos(PHOTOS_COUNT);
-var pictureTemplate = document.querySelector('#picture')
-    .content
-    .querySelector('.picture');
-var fragment = fillFragment(photos, pictureTemplate);
-var picturesEl = document.querySelector('.pictures');
-
-picturesEl.appendChild(fragment);
+var photos = window.data.getMockData();
+window.gallery.renderGallery(photos);
 
 // ------------------------------
 // Задание 7, подробности
 
+// не забыть про то, что окно не должен закрываться при активном поле комментов и (вроде?) тегов
+
 var uploadFileEl = document.querySelector('#upload-file');
-var imgEditWindowEl = document.querySelector('.img-upload__overlay');
+
+window.imgEditWindowEl = document.querySelector('.img-upload__overlay');
+
 var imgEditWindowCloseEl = imgEditWindowEl.querySelector('#upload-cancel');
 var scaleValueEl = imgEditWindowEl.querySelector('.scale__control--value');
 var imgUploadPreviewEl = imgEditWindowEl.querySelector('.img-upload__preview img');
@@ -183,7 +82,7 @@ var sliderLineEl = imgEditWindowEl.querySelector('.effect-level__line');
 var sliderDepthEl = imgEditWindowEl.querySelector('.effect-level__depth');
 var sliderValueEl = imgEditWindowEl.querySelector('.effect-level__value');
 
-var commentEl = imgEditWindowEl.querySelector('.text__description');
+
 
 var getFilterValue = function (key, value) {
   // превращает значение [0, 1] в корректный диапазон значений фильтра
@@ -212,7 +111,8 @@ var applyEffect = function (key) {
 };
 
 var onImgEditWindowEscPress = function (evt) {
-  if (evt.keyCode === ESC_KEYCODE && document.activeElement !== commentEl) {
+  // commentEl - появляется из другого модуля. А могут ли переменные в модуле ссылаться друг на друга?
+  if (evt.keyCode === ESC_KEYCODE && document.activeElement !== window.validation.commentEl) {
     closeImgEditWindow();
   }
 };
@@ -316,38 +216,3 @@ sliderPinEl.addEventListener('mousedown', function (evt) {
   document.addEventListener('mousemove', onMouseMove);
   document.addEventListener('mouseup', onMouseUp);
 });
-
-// ------------------------------
-// Задание 8. Валидация форм
-
-var CommentFiledValidationData = {
-  MAX_LENGTH: 140,
-  VALIDITY_STYLE: 'outline',
-  INVALID_STYLE: '3px solid red',
-  VALID_STYLE: 'none',
-  INVALID_TEXT: 'Не больше 140 символов.'
-};
-
-var imgUploadForm = document.querySelector('.img-upload__form');
-
-var isCommentFieldValid = function (commentField) {
-  return commentField.value.length <= CommentFiledValidationData.MAX_LENGTH;
-};
-
-var setCommentFieldState = function (commentField, isValid) {
-  if (isValid) {
-    commentEl.setCustomValidity('');
-    commentEl.style[CommentFiledValidationData.VALIDITY_STYLE] = CommentFiledValidationData.VALID_STYLE;
-  } else {
-    commentEl.setCustomValidity(CommentFiledValidationData.INVALID_TEXT);
-    commentEl.style[CommentFiledValidationData.VALIDITY_STYLE] = CommentFiledValidationData.INVALID_STYLE;
-  }
-};
-
-var validateCommentField = function () {
-  setCommentFieldState(commentEl, isCommentFieldValid(commentEl));
-};
-
-imgUploadForm.addEventListener('submit', validateCommentField);
-commentEl.addEventListener('input', validateCommentField);
-
