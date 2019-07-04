@@ -350,3 +350,4 @@ var validateCommentField = function () {
 
 imgUploadForm.addEventListener('submit', validateCommentField);
 commentEl.addEventListener('input', validateCommentField);
+
