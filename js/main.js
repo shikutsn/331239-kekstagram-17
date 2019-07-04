@@ -320,27 +320,27 @@ sliderPinEl.addEventListener('mousedown', function (evt) {
 // ------------------------------
 // Задание 8. Валидация форм
 
-var COMMENT_FIELD = {
+var CommentFiledValidationData = {
   MAX_LENGTH: 140,
   VALIDITY_STYLE: 'outline',
   INVALID_STYLE: '3px solid red',
-  VALID_STYLE: 'none'
+  VALID_STYLE: 'none',
+  INVALID_TEXT: 'Не больше 140 символов.'
 };
-COMMENT_FIELD.INVALID_TEXT = 'Не больше ' + COMMENT_FIELD.MAX_LENGTH + ' символов.';
 
 var imgUploadForm = document.querySelector('.img-upload__form');
 
 var isCommentFieldValid = function (commentField) {
-  return commentField.value.length <= COMMENT_FIELD.MAX_LENGTH ? true : false;
+  return commentField.value.length <= CommentFiledValidationData.MAX_LENGTH;
 };
 
 var setCommentFieldState = function (commentField, isValid) {
   if (isValid) {
     commentEl.setCustomValidity('');
-    commentEl.style[COMMENT_FIELD.VALIDITY_STYLE] = COMMENT_FIELD.VALID_STYLE;
+    commentEl.style[CommentFiledValidationData.VALIDITY_STYLE] = CommentFiledValidationData.VALID_STYLE;
   } else {
-    commentEl.setCustomValidity(COMMENT_FIELD.INVALID_TEXT);
-    commentEl.style[COMMENT_FIELD.VALIDITY_STYLE] = COMMENT_FIELD.INVALID_STYLE;
+    commentEl.setCustomValidity(CommentFiledValidationData.INVALID_TEXT);
+    commentEl.style[CommentFiledValidationData.VALIDITY_STYLE] = CommentFiledValidationData.INVALID_STYLE;
   }
 };
 
