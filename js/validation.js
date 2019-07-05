@@ -11,7 +11,7 @@
   };
 
   var imgUploadForm = document.querySelector('.img-upload__form');
-  var commentEl = window.imgEditWindowEl.querySelector('.text__description');
+  var commentEl = imgUploadForm.querySelector('.text__description');
 
   var isCommentFieldValid = function (commentField) {
     return commentField.value.length <= CommentFiledValidationData.MAX_LENGTH;
@@ -34,8 +34,4 @@
   imgUploadForm.addEventListener('submit', validateCommentField);
   commentEl.addEventListener('input', validateCommentField);
 
-  // экспорт в глобальную область
-  window.validation = {
-    commentEl: commentEl
-  };
 })();

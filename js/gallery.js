@@ -30,10 +30,9 @@
     var picturesEl = document.querySelector('.pictures');
 
     picturesEl.appendChild(fragment);
-  }
-
-  window.gallery = {
-    renderGallery: renderGallery
   };
+
+  var photos = window.data.getMockData();
+  renderGallery(photos);
 
 })();

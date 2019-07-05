@@ -10,7 +10,6 @@
     return arr[getRandomNumber(0, arr.length)];
   };
 
-  // экспорт
   window.util = {
     getRandomNumber: getRandomNumber,
     getRandomArrayElement: getRandomArrayElement

@@ -73,10 +73,6 @@
   };
 
 
-
-  // var photos = getPhotos(PHOTOS_COUNT);
-
-  // экспорт
   window.data = {
     getMockData: function () {
       return getPhotos(PHOTOS_COUNT);
