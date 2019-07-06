@@ -3,7 +3,7 @@
 
 (function () {
   var URL = {
-    DOWNLOAD: 'https://js.dump.academy/kekstagram/data1'
+    DOWNLOAD: 'https://js.dump.academy/kekstagram/data'
   };
 
   var PHOTOS_COUNT = 25;
