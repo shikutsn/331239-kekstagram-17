@@ -36,7 +36,7 @@
   var loadingSuccessHandler = function (photos) {
     window.data.photos = photos;
     renderGallery(photos);
-  }
+  };
 
   window.data.getData(loadingSuccessHandler);
 
