@@ -24,6 +24,7 @@
   };
 
   var renderGallery = function (photos) {
+    window.data.photos = photos;
     var pictureTemplate = document.querySelector('#picture')
       .content
       .querySelector('.picture');
@@ -33,7 +34,6 @@
     picturesEl.appendChild(fragment);
   };
 
-  // window.data.getMockData(renderGallery);
   window.data.getData(renderGallery);
 
 })();

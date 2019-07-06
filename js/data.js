@@ -3,7 +3,7 @@
 
 (function () {
   var URL = {
-    DOWNLOAD: 'https://js.dump.academy/kekstagram/data'
+    DOWNLOAD: 'https://js.dump.academy/kekstagram/data1'
   };
 
   var PHOTOS_COUNT = 25;
@@ -77,13 +77,27 @@
     return output;
   };
 
+  var loadingErrorHandler = function (errorMessage) {
+    var node = document.createElement('div');
+    node.style = 'z-index: 100; margin: 0 auto; text-align: center; background-color: red;';
+    node.style.position = 'absolute';
+    node.style.padding = '20px';
+    node.style.width = '100%';
+    node.style.left = 0;
+    node.style.fontSize = '30px';
+
+    node.textContent = errorMessage;
+    document.body.insertAdjacentElement('afterbegin', node);
+  };
+
 
   window.data = {
+    photos: [],
     getMockData: function (cb) {
       cb(getPhotos(PHOTOS_COUNT));
     },
     getData: function (cb) {
-      window.backend.load(URL.DOWNLOAD, cb);
+      window.backend.load(URL.DOWNLOAD, cb, loadingErrorHandler);
     }
   };
 
