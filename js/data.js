@@ -1,6 +1,11 @@
 'use strict';
 
+
 (function () {
+  var URL = {
+    DOWNLOAD: 'https://js.dump.academy/kekstagram/data'
+  };
+
   var PHOTOS_COUNT = 25;
   var LIKES_MIN_COUNT = 15;
   var LIKES_MAX_COUNT = 200;
@@ -74,8 +79,11 @@
 
 
   window.data = {
-    getMockData: function () {
-      return getPhotos(PHOTOS_COUNT);
+    getMockData: function (cb) {
+      cb(getPhotos(PHOTOS_COUNT));
+    },
+    getData: function (cb) {
+      window.backend.load(URL.DOWNLOAD, cb);
     }
   };
 

@@ -1,5 +1,6 @@
 'use strict';
 
+
 (function () {
 
   var renderPicture = function (photo, template) {
@@ -32,7 +33,7 @@
     picturesEl.appendChild(fragment);
   };
 
-  var photos = window.data.getMockData();
-  renderGallery(photos);
+  // window.data.getMockData(renderGallery);
+  window.data.getData(renderGallery);
 
 })();

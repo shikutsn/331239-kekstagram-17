@@ -1,5 +1,6 @@
 'use strict';
 
+
 (function () {
   var getRandomNumber = function (min, max) {
     // случайное целое число из полуинтервала [min, max)
