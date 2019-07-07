@@ -14,23 +14,27 @@
   var NEW_PHOTOS_QUANTITY = 10;
 
   var imgFiltersFormEl = document.querySelector('.img-filters__form');
+  var buttonsEl = imgFiltersFormEl.querySelectorAll('.' + Buttons.CLASS);
 
   var currentFilteredPhotos = [];
 
   var setButtonsDataAttributes = function () {
-    imgFiltersFormEl.querySelectorAll('.' + Buttons.CLASS).forEach(function (element) {
+    buttonsEl.forEach(function (element) {
       element.setAttribute(Buttons.DATA_ATTRIBUTE, Buttons.ACTION[element.id]);
     });
   };
 
   var switchActiveButton = function (activeButton) {
-    imgFiltersFormEl.querySelectorAll('.' + Buttons.CLASS).forEach(function (element) {
+    buttonsEl.forEach(function (element) {
+      if (element === activeButton){
+        element.classList.add(Buttons.CLASS_ACTIVE);
+      } else {
       element.classList.remove(Buttons.CLASS_ACTIVE);
+      }
     });
-    activeButton.classList.add(Buttons.CLASS_ACTIVE);
   };
 
-  var removeCurrentPictures = function () {
+  var clearCurrentPictures = function () {
     document.querySelectorAll('.picture').forEach(function (element) {
       element.remove();
     });
@@ -71,7 +75,7 @@
     var action = pressedButton.getAttribute(Buttons.DATA_ATTRIBUTE);
     currentFilteredPhotos = filtersActions[action](window.data.photos);
 
-    removeCurrentPictures();
+    clearCurrentPictures();
     switchActiveButton(pressedButton);
 
     window.gallery.renderGallery(currentFilteredPhotos);
