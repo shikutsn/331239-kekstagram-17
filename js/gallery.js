@@ -35,8 +35,13 @@
   var onLoadingSuccess = function (photos) {
     window.data.photos = photos;
     renderGallery(photos);
+    document.querySelector('.img-filters').classList.remove('img-filters--inactive');
   };
 
   window.data.getData(onLoadingSuccess);
+
+  window.gallery = {
+    renderGallery: renderGallery
+  }
 
 })();
