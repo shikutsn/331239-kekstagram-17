@@ -1,6 +1,5 @@
 'use strict';
 
-
 (function () {
   var ESC_KEYCODE = 27;
 

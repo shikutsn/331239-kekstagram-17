@@ -1,6 +1,5 @@
 'use strict';
 
-
 (function () {
   var CommentFiledValidationData = {
     MAX_LENGTH: 140,

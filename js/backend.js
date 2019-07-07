@@ -1,6 +1,5 @@
 'use strict';
 
-
 (function () {
 
   var load = function (url, onSuccess, onError) {
