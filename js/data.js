@@ -1,6 +1,8 @@
 'use strict';
 
 (function () {
+  var DOWNLOAD_URL = 'https://js.dump.academy/kekstagram/data';
+
   var PHOTOS_COUNT = 25;
   var LIKES_MIN_COUNT = 15;
   var LIKES_MAX_COUNT = 200;
@@ -72,10 +74,27 @@
     return output;
   };
 
+  var onLoadingError = function (errorMessage) {
+    var node = document.createElement('div');
+    node.style = 'z-index: 100; margin: 0 auto; text-align: center; background-color: red;';
+    node.style.position = 'absolute';
+    node.style.padding = '20px';
+    node.style.width = '100%';
+    node.style.left = 0;
+    node.style.fontSize = '30px';
+
+    node.textContent = errorMessage;
+    document.body.insertAdjacentElement('afterbegin', node);
+  };
+
 
   window.data = {
-    getMockData: function () {
-      return getPhotos(PHOTOS_COUNT);
+    photos: [],
+    getMockData: function (onDataLoaded) {
+      onDataLoaded(getPhotos(PHOTOS_COUNT));
+    },
+    getData: function (onDataLoaded) {
+      window.backend.load(DOWNLOAD_URL, onDataLoaded, onLoadingError);
     }
   };
 

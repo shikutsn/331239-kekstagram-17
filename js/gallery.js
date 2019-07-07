@@ -32,7 +32,11 @@
     picturesEl.appendChild(fragment);
   };
 
-  var photos = window.data.getMockData();
-  renderGallery(photos);
+  var onLoadingSuccess = function (photos) {
+    window.data.photos = photos;
+    renderGallery(photos);
+  };
+
+  window.data.getData(onLoadingSuccess);
 
 })();
