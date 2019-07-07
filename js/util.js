@@ -12,7 +12,7 @@
     return arr[getRandomNumber(0, arr.length)];
   };
 
-  var debounce = function (debouncedFunction) {
+  var debounce = function (debouncedAction) {
     var lastTimeout = null;
 
     return function () {
@@ -21,7 +21,7 @@
         window.clearTimeout(lastTimeout);
       }
       lastTimeout = window.setTimeout(function () {
-        debouncedFunction.apply(null, parameters);
+        debouncedAction.apply(null, parameters);
       }, DEBOUNCE_INTERVAL);
     };
   };

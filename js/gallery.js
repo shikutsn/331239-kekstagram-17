@@ -42,6 +42,6 @@
 
   window.gallery = {
     renderGallery: renderGallery
-  }
+  };
 
 })();

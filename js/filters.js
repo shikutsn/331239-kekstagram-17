@@ -1,33 +1,38 @@
 'use strict';
 
 (function () {
-  var BUTTON_CLASS = '.img-filters__button';
-  var BUTTON_ACTIVE_CLASS = 'img-filters__button--active';
+  var Buttons = {
+    'ACTION': {
+      'filter-popular': 'filterPopular',
+      'filter-new': 'filterNew',
+      'filter-discussed': 'filterDiscussed'
+    },
+    'CLASS': 'img-filters__button',
+    'CLASS_ACTIVE': 'img-filters__button--active',
+    'DATA_ATTRIBUTE': 'data-action'
+  };
   var NEW_PHOTOS_QUANTITY = 10;
 
   var imgFiltersFormEl = document.querySelector('.img-filters__form');
-  var filterPopularEl = imgFiltersFormEl.querySelector('#filter-popular');
-  var filterNewEl = imgFiltersFormEl.querySelector('#filter-new');
-  var filterDiscussedEl = imgFiltersFormEl.querySelector('#filter-discussed');
 
   var currentFilteredPhotos = [];
 
-  var switchActiveButton = function (activeButton) {
-    imgFiltersFormEl.querySelectorAll(BUTTON_CLASS).forEach(function (element) {
-      element.classList.remove(BUTTON_ACTIVE_CLASS);
+  var setButtonsDataAttributes = function () {
+    imgFiltersFormEl.querySelectorAll('.' + Buttons.CLASS).forEach(function (element) {
+      element.setAttribute(Buttons.DATA_ATTRIBUTE, Buttons.ACTION[element.id]);
     });
-    activeButton.classList.add(BUTTON_ACTIVE_CLASS);
+  };
+
+  var switchActiveButton = function (activeButton) {
+    imgFiltersFormEl.querySelectorAll('.' + Buttons.CLASS).forEach(function (element) {
+      element.classList.remove(Buttons.CLASS_ACTIVE);
+    });
+    activeButton.classList.add(Buttons.CLASS_ACTIVE);
   };
 
   var removeCurrentPictures = function () {
     document.querySelectorAll('.picture').forEach(function (element) {
       element.remove();
-    });
-  };
-
-  var filterDiscussed = function (photos) {
-    return photos.slice().sort(function (a, b) {
-      return b.comments.length - a.comments.length;
     });
   };
 
@@ -42,51 +47,39 @@
     return arr;
   };
 
-  var filterNew = function (photos) {
-    return shuffleArray(photos.slice()).filter(function (it, i, arr) {
-      return arr.indexOf(it) === i;
-    }).slice(0, NEW_PHOTOS_QUANTITY);
+  var filtersActions = {
+    filterNew: function (photos) {
+      return shuffleArray(photos.slice()).filter(function (it, i, arr) {
+        return arr.indexOf(it) === i;
+      }).slice(0, NEW_PHOTOS_QUANTITY);
+    },
+
+    filterDiscussed: function (photos) {
+      return photos.slice().sort(function (a, b) {
+        return b.comments.length - a.comments.length;
+      });
+    },
+
+    filterPopular: function (photos) {
+    // бессмысленная функция, но она нужна для унификации обработки нажатий на кнопки фильтров
+      return photos;
+    }
   };
 
-  // ДЕЛЕГИРОВАНИЕ РЕШИТ ПРОБЛЕМЫ! и сделает код обработчика красивым
-  // см. https://learn.javascript.ru/event-delegation  (там в конце про делегирование)
-  var renderNewPictures = function (evt) {
-    var button = evt.target;
+  var onFiltersFormClick = function (evt) {
+    var pressedButton = evt.target.closest('.' + Buttons.CLASS);
+    var action = pressedButton.getAttribute(Buttons.DATA_ATTRIBUTE);
+    currentFilteredPhotos = filtersActions[action](window.data.photos);
 
     removeCurrentPictures();
-    switchActiveButton(button);
+    switchActiveButton(pressedButton);
 
-    if (button === filterPopularEl) {
-      currentFilteredPhotos = window.data.photos;
-    } else if (button === filterNewEl) {
-      currentFilteredPhotos = filterNew(window.data.photos);
-    } else if (button === filterDiscussedEl) {
-      currentFilteredPhotos = filterDiscussed(window.data.photos);
-    }
     window.gallery.renderGallery(currentFilteredPhotos);
   };
 
-  var onFilterButtonClick = window.util.debounce(renderNewPictures);
+  var onFiltersFormClickDebounced = window.util.debounce(onFiltersFormClick);
 
-  filterPopularEl.addEventListener('click', onFilterButtonClick);
-  filterNewEl.addEventListener('click', onFilterButtonClick);
-  filterDiscussedEl.addEventListener('click', onFilterButtonClick);
-
-  // начало делегирования. Но тут как-то не особо, потому что от ИФа не уйти
-  // разве что хранить названия функций в data-* атрибутах
-  // и тогда сделать массив из айдишников, соответствующих им data-* атрибутов  и названий
-  // функций-обработчиков. На инициализации навесить все нужные data-* атрибуты, а потом,
-  // делегируя, вызывать нужный метод по содержимому data-* атрибута.
-  // если будет время, попробовать
-  // var onFiltersFormClick = function (evt) {
-  //   var target = evt.target;
-  //   var button = target.closest('.img-filters__button');
-  //   if (button) {
-
-  //   }
-
-  // };
-
-  // imgFiltersFormEl.addEventListener('click')
+  setButtonsDataAttributes();
+  imgFiltersFormEl.addEventListener('click', onFiltersFormClickDebounced);
 
 })();
