@@ -26,10 +26,10 @@
 
   var switchActiveButton = function (activeButton) {
     buttonsEl.forEach(function (element) {
-      if (element === activeButton){
+      if (element === activeButton) {
         element.classList.add(Buttons.CLASS_ACTIVE);
       } else {
-      element.classList.remove(Buttons.CLASS_ACTIVE);
+        element.classList.remove(Buttons.CLASS_ACTIVE);
       }
     });
   };
