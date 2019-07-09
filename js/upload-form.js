@@ -63,7 +63,6 @@
     }
   };
 
-
   var uploadFileEl = document.querySelector('#upload-file');
 
   var imgEditWindowEl = document.querySelector('.img-upload__overlay');
@@ -157,6 +156,7 @@
     }
   };
 
+
   scaleDecrementEl.addEventListener('click', function () {
     decrementImgScale(imgUploadPreviewEl, scaleValueEl);
   });
@@ -165,6 +165,7 @@
   });
 
   uploadFileEl.addEventListener('change', openImgEditWindow);
+
 
   var addEffectsChangeListeners = function (effectsEl) {
     effectsEl.forEach(function (item) {
@@ -213,5 +214,4 @@
     document.addEventListener('mousemove', onMouseMove);
     document.addEventListener('mouseup', onMouseUp);
   });
-
 })();

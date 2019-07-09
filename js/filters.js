@@ -2,21 +2,21 @@
 
 (function () {
   var FiltersMap = {
-    'filter-popular': 'filterPopular',
-    'filter-new': 'filterNew',
-    'filter-discussed': 'filterDiscussed'
+    'filter-popular': 'getPopular',
+    'filter-new': 'getNew',
+    'filter-discussed': 'getDiscussed'
   };
   var ButtonCls = {
     DEFAULT: 'img-filters__button',
     ACTIVE: 'img-filters__button--active'
   };
   var FILTER_BTN_STORE_ATTR = 'data-action';
-  var NEW_PHOTOS_QUANTITY = 10;
 
   var imgFiltersFormEl = document.querySelector('.img-filters__form');
   var buttonsEl = imgFiltersFormEl.querySelectorAll('.' + ButtonCls.DEFAULT);
 
   var currentFilteredPhotos = [];
+
 
   var setButtonsDataAttributes = function () {
     buttonsEl.forEach(function (element) {
@@ -42,8 +42,8 @@
 
   var onFiltersFormClick = function (evt) {
     var pressedButton = evt.target.closest('.' + ButtonCls.DEFAULT);
-    var action = pressedButton.getAttribute(FILTER_BTN_STORE_ATTR);
-    currentFilteredPhotos = window.data.photoFilters[action](window.data.photos, NEW_PHOTOS_QUANTITY);
+    var filter = pressedButton.getAttribute(FILTER_BTN_STORE_ATTR);
+    currentFilteredPhotos = window.data[filter]();
 
     clearCurrentPictures();
     switchActiveButton(pressedButton);
@@ -53,7 +53,16 @@
 
   var onFiltersFormClickDebounced = window.util.debounce(onFiltersFormClick);
 
+  var showFiltersForm = function () {
+    document.querySelector('.img-filters').classList.remove('img-filters--inactive');
+  };
+
+
   setButtonsDataAttributes();
   imgFiltersFormEl.addEventListener('click', onFiltersFormClickDebounced);
 
+
+  window.filters = {
+    showFiltersForm: showFiltersForm
+  };
 })();

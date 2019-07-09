@@ -1,7 +1,6 @@
 'use strict';
 
 (function () {
-
   var load = function (url, onSuccess, onError) {
     var xhr = new XMLHttpRequest();
     xhr.responseType = 'json';
@@ -32,5 +31,4 @@
   window.backend = {
     load: load
   };
-
 })();

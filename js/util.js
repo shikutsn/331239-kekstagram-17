@@ -38,11 +38,11 @@
     };
   };
 
+
   window.util = {
     getRandomNumber: getRandomNumber,
     getRandomArrayElement: getRandomArrayElement,
     shuffleArray: shuffleArray,
     debounce: debounce
   };
-
 })();
