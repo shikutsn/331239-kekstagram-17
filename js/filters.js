@@ -10,17 +10,10 @@
     DEFAULT: 'img-filters__button',
     ACTIVE: 'img-filters__button--active'
   };
-  var FILTER_BTN_STORE_ATTR = 'data-action';
 
   var imgFiltersFormEl = document.querySelector('.img-filters__form');
   var buttonsEl = imgFiltersFormEl.querySelectorAll('.' + ButtonCls.DEFAULT);
 
-
-  var setButtonsDataAttributes = function () {
-    buttonsEl.forEach(function (element) {
-      element.setAttribute(FILTER_BTN_STORE_ATTR, FiltersMap[element.id]);
-    });
-  };
 
   var switchActiveButton = function (activeButton) {
     buttonsEl.forEach(function (element) {
@@ -40,13 +33,11 @@
 
   var onFiltersFormClick = function (evt) {
     var pressedButton = evt.target.closest('.' + ButtonCls.DEFAULT);
-    var filter = pressedButton.getAttribute(FILTER_BTN_STORE_ATTR);
 
     clearCurrentPictures();
     switchActiveButton(pressedButton);
 
-    console.log([filter]);
-    window.gallery.renderGallery([filter]);
+    window.gallery.renderGallery(FiltersMap[pressedButton.id]());
   };
 
   var onFiltersFormClickDebounced = window.util.debounce(onFiltersFormClick);
@@ -56,7 +47,6 @@
   };
 
 
-  setButtonsDataAttributes();
   imgFiltersFormEl.addEventListener('click', onFiltersFormClickDebounced);
 
 
