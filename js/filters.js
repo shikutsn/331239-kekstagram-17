@@ -1,35 +1,35 @@
 'use strict';
 
 (function () {
-  var Buttons = {
-    'ACTION': {
-      'filter-popular': 'filterPopular',
-      'filter-new': 'filterNew',
-      'filter-discussed': 'filterDiscussed'
-    },
-    'CLASS': 'img-filters__button',
-    'CLASS_ACTIVE': 'img-filters__button--active',
-    'DATA_ATTRIBUTE': 'data-action'
+  var FiltersMap = {
+    'filter-popular': 'filterPopular',
+    'filter-new': 'filterNew',
+    'filter-discussed': 'filterDiscussed'
   };
+  var ButtonCls = {
+    DEFAULT: 'img-filters__button',
+    ACTIVE: 'img-filters__button--active'
+  };
+  var FILTER_BTN_STORE_ATTR = 'data-action';
   var NEW_PHOTOS_QUANTITY = 10;
 
   var imgFiltersFormEl = document.querySelector('.img-filters__form');
-  var buttonsEl = imgFiltersFormEl.querySelectorAll('.' + Buttons.CLASS);
+  var buttonsEl = imgFiltersFormEl.querySelectorAll('.' + ButtonCls.DEFAULT);
 
   var currentFilteredPhotos = [];
 
   var setButtonsDataAttributes = function () {
     buttonsEl.forEach(function (element) {
-      element.setAttribute(Buttons.DATA_ATTRIBUTE, Buttons.ACTION[element.id]);
+      element.setAttribute(FILTER_BTN_STORE_ATTR, FiltersMap[element.id]);
     });
   };
 
   var switchActiveButton = function (activeButton) {
     buttonsEl.forEach(function (element) {
       if (element === activeButton) {
-        element.classList.add(Buttons.CLASS_ACTIVE);
+        element.classList.add(ButtonCls.ACTIVE);
       } else {
-        element.classList.remove(Buttons.CLASS_ACTIVE);
+        element.classList.remove(ButtonCls.ACTIVE);
       }
     });
   };
@@ -40,40 +40,10 @@
     });
   };
 
-  var shuffleArray = function (arr) {
-    // гугл довел до перемешивания алгоритмом Фишера — Йетса
-    for (var i = arr.length - 1; i > 0; i--) {
-      var j = window.util.getRandomNumber(0, i + 1);
-      var tmp = arr[j];
-      arr[j] = arr[i];
-      arr[i] = tmp;
-    }
-    return arr;
-  };
-
-  var filtersActions = {
-    filterNew: function (photos) {
-      return shuffleArray(photos.slice()).filter(function (it, i, arr) {
-        return arr.indexOf(it) === i;
-      }).slice(0, NEW_PHOTOS_QUANTITY);
-    },
-
-    filterDiscussed: function (photos) {
-      return photos.slice().sort(function (a, b) {
-        return b.comments.length - a.comments.length;
-      });
-    },
-
-    filterPopular: function (photos) {
-    // бессмысленная функция, но она нужна для унификации обработки нажатий на кнопки фильтров
-      return photos;
-    }
-  };
-
   var onFiltersFormClick = function (evt) {
-    var pressedButton = evt.target.closest('.' + Buttons.CLASS);
-    var action = pressedButton.getAttribute(Buttons.DATA_ATTRIBUTE);
-    currentFilteredPhotos = filtersActions[action](window.data.photos);
+    var pressedButton = evt.target.closest('.' + ButtonCls.DEFAULT);
+    var action = pressedButton.getAttribute(FILTER_BTN_STORE_ATTR);
+    currentFilteredPhotos = window.data.photoFilters[action](window.data.photos, NEW_PHOTOS_QUANTITY);
 
     clearCurrentPictures();
     switchActiveButton(pressedButton);

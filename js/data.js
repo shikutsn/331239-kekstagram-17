@@ -87,6 +87,23 @@
     document.body.insertAdjacentElement('afterbegin', node);
   };
 
+  var photoFilters = {
+    filterNew: function (photos, quantity) {
+      return window.util.shuffleArray(photos).slice(0, quantity);
+    },
+
+    filterDiscussed: function (photos) {
+      return photos.slice().sort(function (a, b) {
+        return b.comments.length - a.comments.length;
+      });
+    },
+
+    filterPopular: function (photos) {
+    // бессмысленная функция, но она нужна для унификации обработки нажатий на кнопки фильтров
+      return photos;
+    }
+  };
+
 
   window.data = {
     photos: [],
@@ -95,7 +112,8 @@
     },
     getData: function (onDataLoaded) {
       window.backend.load(DOWNLOAD_URL, onDataLoaded, onLoadingError);
-    }
+    },
+    photoFilters: photoFilters
   };
 
 })();
