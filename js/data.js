@@ -41,6 +41,8 @@
 
   var NEW_PHOTOS_QUANTITY = 10;
 
+  var discussedPhotos = [];
+
 
   var getRandomComment = function (quantity) {
     var comments = [];
@@ -79,12 +81,12 @@
   };
 
   var getDiscussed = function () {
-    if (window.data.discussedPhotos) {
-      window.data.discussedPhotos = window.data.photos.slice().sort(function (a, b) {
+    if (discussedPhotos) {
+      discussedPhotos = window.data.photos.slice().sort(function (a, b) {
         return b.comments.length - a.comments.length;
       });
     }
-    return window.data.discussedPhotos;
+    return discussedPhotos;
   };
 
   var getPopular = function () {
@@ -94,7 +96,6 @@
 
   window.data = {
     photos: [],
-    discussedPhotos: [],
     getNew: getNew,
     getDiscussed: getDiscussed,
     getPopular: getPopular,

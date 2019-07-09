@@ -2,9 +2,9 @@
 
 (function () {
   var FiltersMap = {
-    'filter-popular': 'getPopular',
-    'filter-new': 'getNew',
-    'filter-discussed': 'getDiscussed'
+    'filter-popular': window.data.getPopular,
+    'filter-new': window.data.getNew,
+    'filter-discussed': window.data.getDiscussed
   };
   var ButtonCls = {
     DEFAULT: 'img-filters__button',
@@ -14,8 +14,6 @@
 
   var imgFiltersFormEl = document.querySelector('.img-filters__form');
   var buttonsEl = imgFiltersFormEl.querySelectorAll('.' + ButtonCls.DEFAULT);
-
-  var currentFilteredPhotos = [];
 
 
   var setButtonsDataAttributes = function () {
@@ -43,12 +41,12 @@
   var onFiltersFormClick = function (evt) {
     var pressedButton = evt.target.closest('.' + ButtonCls.DEFAULT);
     var filter = pressedButton.getAttribute(FILTER_BTN_STORE_ATTR);
-    currentFilteredPhotos = window.data[filter]();
 
     clearCurrentPictures();
     switchActiveButton(pressedButton);
 
-    window.gallery.renderGallery(currentFilteredPhotos);
+    console.log([filter]);
+    window.gallery.renderGallery([filter]);
   };
 
   var onFiltersFormClickDebounced = window.util.debounce(onFiltersFormClick);
