@@ -1,8 +1,6 @@
 'use strict';
 
 (function () {
-  var DOWNLOAD_URL = 'https://js.dump.academy/kekstagram/data';
-
   var PHOTOS_COUNT = 25;
   var LIKES_MIN_COUNT = 15;
   var LIKES_MAX_COUNT = 200;
@@ -41,6 +39,11 @@
     'Евгения'
   ];
 
+  var NEW_PHOTOS_QUANTITY = 10;
+
+  var photos = [];
+  var discussedPhotos = [];
+
 
   var getRandomComment = function (quantity) {
     var comments = [];
@@ -74,28 +77,36 @@
     return output;
   };
 
-  var onLoadingError = function (errorMessage) {
-    var node = document.createElement('div');
-    node.style = 'z-index: 100; margin: 0 auto; text-align: center; background-color: red;';
-    node.style.position = 'absolute';
-    node.style.padding = '20px';
-    node.style.width = '100%';
-    node.style.left = 0;
-    node.style.fontSize = '30px';
+  var getNew = function () {
+    return window.util.shuffleArray(photos).slice(0, NEW_PHOTOS_QUANTITY);
+  };
 
-    node.textContent = errorMessage;
-    document.body.insertAdjacentElement('afterbegin', node);
+  var getDiscussed = function () {
+    if (!discussedPhotos.length) {
+      discussedPhotos = photos.slice().sort(function (a, b) {
+        return b.comments.length - a.comments.length;
+      });
+    }
+    return discussedPhotos;
+  };
+
+  var getPopular = function () {
+    return photos;
+  };
+
+  var setData = function (data) {
+    photos = data;
+    getDiscussed();
   };
 
 
   window.data = {
-    photos: [],
+    getNew: getNew,
+    getDiscussed: getDiscussed,
+    getPopular: getPopular,
+    setData: setData,
     getMockData: function (onDataLoaded) {
       onDataLoaded(getPhotos(PHOTOS_COUNT));
-    },
-    getData: function (onDataLoaded) {
-      window.backend.load(DOWNLOAD_URL, onDataLoaded, onLoadingError);
     }
   };
-
 })();

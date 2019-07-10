@@ -1,7 +1,6 @@
 'use strict';
 
 (function () {
-
   var load = function (url, onSuccess, onError) {
     var xhr = new XMLHttpRequest();
     xhr.responseType = 'json';
@@ -19,7 +18,7 @@
     });
 
     xhr.addEventListener('timeout', function () {
-      onError('Запрос не успел выполниться за ' + xhr.timeout + 'мс');
+      onError('Запрос не успел выполниться за ' + xhr.timeout + ' мс');
     });
 
     xhr.timeout = 10000;
@@ -32,5 +31,4 @@
   window.backend = {
     load: load
   };
-
 })();

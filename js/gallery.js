@@ -1,7 +1,6 @@
 'use strict';
 
 (function () {
-
   var renderPicture = function (photo, template) {
     var pictureElement = template.cloneNode(true);
 
@@ -32,11 +31,8 @@
     picturesEl.appendChild(fragment);
   };
 
-  var onLoadingSuccess = function (photos) {
-    window.data.photos = photos;
-    renderGallery(photos);
+
+  window.gallery = {
+    renderGallery: renderGallery
   };
-
-  window.data.getData(onLoadingSuccess);
-
 })();

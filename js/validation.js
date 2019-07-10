@@ -12,6 +12,7 @@
   var imgUploadForm = document.querySelector('.img-upload__form');
   var commentEl = imgUploadForm.querySelector('.text__description');
 
+
   var isCommentFieldValid = function (commentField) {
     return commentField.value.length <= CommentFiledValidationData.MAX_LENGTH;
   };
@@ -30,7 +31,7 @@
     setCommentFieldState(commentEl, isCommentFieldValid(commentEl));
   };
 
+
   imgUploadForm.addEventListener('submit', validateCommentField);
   commentEl.addEventListener('input', validateCommentField);
-
 })();
