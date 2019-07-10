@@ -17,8 +17,7 @@
   };
 
   var onLoadingSuccess = function (photos) {
-    window.data.photos = photos;
-    window.data.discussedPhotos = [];
+    window.data.setData(photos);
     window.gallery.renderGallery(photos);
     window.filters.showFiltersForm();
   };
