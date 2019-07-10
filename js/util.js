@@ -2,6 +2,7 @@
 
 (function () {
   var DEBOUNCE_INTERVAL = 500;
+  var ESC_KEYCODE = 27;
 
   var getRandomNumber = function (min, max) {
     // случайное целое число из полуинтервала [min, max)
@@ -40,6 +41,7 @@
 
 
   window.util = {
+    ESC_KEYCODE: ESC_KEYCODE,
     getRandomNumber: getRandomNumber,
     getRandomArrayElement: getRandomArrayElement,
     shuffleArray: shuffleArray,

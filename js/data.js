@@ -43,6 +43,7 @@
 
   var photos = [];
   var discussedPhotos = [];
+  var renderedPhotos = [];
 
 
   var getRandomComment = function (quantity) {
@@ -78,7 +79,8 @@
   };
 
   var getNew = function () {
-    return window.util.shuffleArray(photos).slice(0, NEW_PHOTOS_QUANTITY);
+    renderedPhotos = window.util.shuffleArray(photos).slice(0, NEW_PHOTOS_QUANTITY);
+    return renderedPhotos;
   };
 
   var getDiscussed = function () {
@@ -87,17 +89,24 @@
         return b.comments.length - a.comments.length;
       });
     }
+    renderedPhotos = discussedPhotos;
     return discussedPhotos;
   };
 
   var getPopular = function () {
+    renderedPhotos = photos;
     return photos;
   };
 
   var setData = function (data) {
     photos = data;
     getDiscussed();
+    renderedPhotos = data;
   };
+
+  var getRenderedPhotos = function () {
+    return renderedPhotos;
+  }
 
 
   window.data = {
@@ -105,6 +114,7 @@
     getDiscussed: getDiscussed,
     getPopular: getPopular,
     setData: setData,
+    getRenderedPhotos: getRenderedPhotos,
     getMockData: function (onDataLoaded) {
       onDataLoaded(getPhotos(PHOTOS_COUNT));
     }

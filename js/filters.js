@@ -34,10 +34,12 @@
   var onFiltersFormClick = function (evt) {
     var pressedButton = evt.target.closest('.' + ButtonCls.DEFAULT);
 
-    clearCurrentPictures();
-    switchActiveButton(pressedButton);
+    if (pressedButton) {
+      clearCurrentPictures();
+      switchActiveButton(pressedButton);
 
-    window.gallery.renderGallery(FiltersMap[pressedButton.id]());
+      window.gallery.renderGallery(FiltersMap[pressedButton.id]());
+    }
   };
 
   var onFiltersFormClickDebounced = window.util.debounce(onFiltersFormClick);

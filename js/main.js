@@ -2,6 +2,7 @@
 
 (function () {
   var DOWNLOAD_URL = 'https://js.dump.academy/kekstagram/data';
+  var UPLOAD_URL = 'https://js.dump.academy/kekstagram';
 
   var onLoadingError = function (errorMessage) {
     var node = document.createElement('div');

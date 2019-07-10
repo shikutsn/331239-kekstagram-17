@@ -1,8 +1,6 @@
 'use strict';
 
 (function () {
-  var ESC_KEYCODE = 27;
-
   var ScaleConfig = {
     DEFAULT: 100,
     MIN: 25,
@@ -108,7 +106,7 @@
   };
 
   var onImgEditWindowEscPress = function (evt) {
-    if (evt.keyCode === ESC_KEYCODE && document.activeElement !== commentEl) {
+    if (evt.keyCode === window.util.ESC_KEYCODE && document.activeElement !== commentEl) {
       closeImgEditWindow();
     }
   };
