@@ -6,21 +6,16 @@
   var bigPictureEl = document.querySelector('.big-picture');
   var bigPictureImgEl = bigPictureEl.querySelector('.big-picture__img img');
   var likesCountEl = bigPictureEl.querySelector('.likes-count');
-  // список комментариев
   var commentsListEl = bigPictureEl.querySelector('.social__comments');
-  // комментариев показано
-  var commentsCountEl = bigPictureEl.querySelector('.social__comment-count');
-  // комментариев всего
+  var commentsRenderedEl = bigPictureEl.querySelector('.comments-shown');
   var commentsTotalCountEl = bigPictureEl.querySelector('.comments-count');
-  // кнопка загрузки доп. комментов
   var commentsLoaderEl = bigPictureEl.querySelector('.comments-loader');
   var pictureDescriptionEl = bigPictureEl.querySelector('.social__caption');
   var closeButtonEl = bigPictureEl.querySelector('.big-picture__cancel');
-  // в качестве шаблона комментария запомним первый комментарий,
-  // который всегда есть в исходной разметке
   var commentTemplateEl = bigPictureEl.querySelector('.social__comment');
 
-  var renderedCommentsCount = 0;
+  var commentsRenderedCount;
+  var comments;
 
 
   var getCommentElement = function (comment, template) {
@@ -44,56 +39,68 @@
     document.body.classList.remove('modal-open');
     closeButtonEl.removeEventListener('click', closeBigPicture);
     document.removeEventListener('keydown', onBigPictureEscPress);
+    commentsLoaderEl.removeEventListener('click', renderComments);
   };
 
-  var clearComments = function () {
+  var clearRenderedComments = function () {
     commentsListEl.querySelectorAll('.social__comment').forEach(function (element) {
       element.remove();
     });
   };
 
-  var renderComments = function (comments) {
-    clearComments();
+  var renderCommentsCounters = function (commentsRendered, commentsTotal) {
+    commentsRenderedEl.textContent = commentsRendered;
+    commentsTotalCountEl.textContent = commentsTotal;
+  };
 
-    // как-то тут надо обновлять число отрисованных комментов
+  var renderComments = function () {
+    var commentsTotalCount = comments.length;
 
-    comments.forEach(function (item) {
+    comments.slice(commentsRenderedCount, commentsRenderedCount + COMMENTS_PER_PAGE).forEach(function (item) {
       commentsListEl.appendChild(getCommentElement(item, commentTemplateEl));
     });
+
+    commentsRenderedCount += COMMENTS_PER_PAGE;
+
+    if (commentsRenderedCount >= commentsTotalCount) {
+      commentsRenderedCount = commentsTotalCount;
+      commentsLoaderEl.classList.add('hidden');
+    } else {
+      commentsLoaderEl.classList.remove('hidden');
+    }
+
+    renderCommentsCounters(commentsRenderedCount, commentsTotalCount);
+  };
+
+  var renderBigPicture = function (photo) {
+    bigPictureImgEl.src = photo.url;
+    likesCountEl.textContent = photo.likes;
+    pictureDescriptionEl.textContent = photo.description;
   };
 
 
   var openBigPicture = function (evt) {
-    // эту функцию поделить на мелкие для логичности
-    // пока что тут прототип
     var clickedPicture = evt.target.closest('.picture');
     if (clickedPicture) {
       var renderedPhotos = window.data.getRenderedPhotos();
-      var index = Array.from(document.querySelectorAll('.picture')).indexOf(clickedPicture);
+      var clickedPictureIndex = Array.from(document.querySelectorAll('.picture')).indexOf(clickedPicture);
+
+      commentsRenderedCount = 0;
+      comments = renderedPhotos[clickedPictureIndex].comments;
 
       bigPictureEl.classList.remove('hidden');
       document.body.classList.add('modal-open');
 
-      bigPictureImgEl.src = renderedPhotos[index].url;
-      likesCountEl.textContent = renderedPhotos[index].likes;
-      commentsTotalCountEl.textContent = renderedPhotos[index].comments.length;
-      pictureDescriptionEl.textContent = renderedPhotos[index].description;
+      renderBigPicture(renderedPhotos[clickedPictureIndex]);
 
-      // commentsCountEl.classList.add('visually-hidden');
-      // commentsLoaderEl.classList.add('visually-hidden');
-
-      renderComments(renderedPhotos[index].comments);
+      clearRenderedComments();
+      renderComments();
 
       closeButtonEl.addEventListener('click', closeBigPicture);
       document.addEventListener('keydown', onBigPictureEscPress);
+      commentsLoaderEl.addEventListener('click', renderComments);
     }
   };
 
   document.querySelector('.pictures').addEventListener('click', openBigPicture);
-
-
-  // убедиться, что все функции нужны снаружи (особенно openBigPicture)
-  // window.bigPicture = {
-  //   openBigPicture: openBigPicture
-  // };
 })();
