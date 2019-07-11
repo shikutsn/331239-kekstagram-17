@@ -110,7 +110,7 @@
     if (evt.keyCode === window.util.ESC_KEYCODE
     && document.activeElement !== commentEl
     && document.activeElement !== hashTagsEl) {
-        closeImgEditWindow();
+      closeImgEditWindow();
     }
   };
 
@@ -217,7 +217,7 @@
   });
 
   // открываем окно добавления изображения для отладки
-  console.log('debug');
-  openImgEditWindow();
-  uploadFileEl.removeAttribute('required');
+  // console.log('upload-form debug');
+  // openImgEditWindow();
+  // uploadFileEl.removeAttribute('required');
 })();
