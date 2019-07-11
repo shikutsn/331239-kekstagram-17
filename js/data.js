@@ -106,7 +106,7 @@
 
   var getRenderedPhotos = function () {
     return renderedPhotos;
-  }
+  };
 
 
   window.data = {

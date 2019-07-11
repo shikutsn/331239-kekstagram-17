@@ -77,6 +77,7 @@
   var sliderDepthEl = imgEditWindowEl.querySelector('.effect-level__depth');
   var sliderValueEl = imgEditWindowEl.querySelector('.effect-level__value');
   var commentEl = imgEditWindowEl.querySelector('.text__description');
+  var hashTagsEl = imgEditWindowEl.querySelector('.text__hashtags');
 
 
   var getFilterValue = function (key, value) {
@@ -106,8 +107,10 @@
   };
 
   var onImgEditWindowEscPress = function (evt) {
-    if (evt.keyCode === window.util.ESC_KEYCODE && document.activeElement !== commentEl) {
-      closeImgEditWindow();
+    if (evt.keyCode === window.util.ESC_KEYCODE
+    && document.activeElement !== commentEl
+    && document.activeElement !== hashTagsEl) {
+        closeImgEditWindow();
     }
   };
 
@@ -212,4 +215,9 @@
     document.addEventListener('mousemove', onMouseMove);
     document.addEventListener('mouseup', onMouseUp);
   });
+
+  // открываем окно добавления изображения для отладки
+  console.log('debug');
+  openImgEditWindow();
+  uploadFileEl.removeAttribute('required');
 })();
