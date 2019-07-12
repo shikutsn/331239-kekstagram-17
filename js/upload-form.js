@@ -216,6 +216,8 @@
     document.addEventListener('mouseup', onMouseUp);
   });
 
+
+
   // открываем окно добавления изображения для отладки
   // console.log('upload-form debug');
   // openImgEditWindow();

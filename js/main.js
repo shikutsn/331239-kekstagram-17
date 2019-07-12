@@ -2,7 +2,7 @@
 
 (function () {
   var DOWNLOAD_URL = 'https://js.dump.academy/kekstagram/data';
-  var UPLOAD_URL = 'https://js.dump.academy/kekstagram';
+
 
   var onLoadingError = function (errorMessage) {
     var node = document.createElement('div');
@@ -24,5 +24,5 @@
   };
 
 
-  window.backend.load(DOWNLOAD_URL, onLoadingSuccess, onLoadingError);
+  window.backend.download(DOWNLOAD_URL, onLoadingSuccess, onLoadingError);
 })();

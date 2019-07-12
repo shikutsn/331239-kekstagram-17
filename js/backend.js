@@ -1,7 +1,7 @@
 'use strict';
 
 (function () {
-  var load = function (url, onSuccess, onError) {
+  var download = function (url, onSuccess, onError) {
     var xhr = new XMLHttpRequest();
     xhr.responseType = 'json';
 
@@ -29,24 +29,25 @@
 
   // правильно ли?
   // https://learn.javascript.ru/xhr-forms
-  // var upload = function (url, data, onSuccess, onError) {
-  //   var xhr = new XMLHttpRequest();
-  //   xhr.responseType = 'json';
+  var upload = function (url, data, onSuccess, onError) {
+    var xhr = new XMLHttpRequest();
+    xhr.responseType = 'json';
 
-  //   xhr.addEventListener('load', function () {
-  //     if (xhr.status === 200) {
-  //       onSuccess();
-  //     } else {
-  //       onError();
-  //     }
-  //   });
+    xhr.addEventListener('load', function () {
+      if (xhr.status === 200) {
+        onSuccess();
+      } else {
+        onError();
+      }
+    });
 
-  //   xhr.open('POST', url);
-  //   xhr.send(data);
-  // }
+    xhr.open('POST', url);
+    xhr.send(data);
+  }
 
 
   window.backend = {
-    load: load
+    download: download,
+    upload: upload
   };
 })();

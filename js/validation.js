@@ -92,6 +92,7 @@
   var isHashTagsFieldInvalid = function (hashTagsField) {
     // если возвращается не пустая строка, то в поле ошибки
     // чтобы сократить код, переписать на ассоциативный массив?
+    // типа такого перебора: for (var key in data)
     var hashTagsArr = getHashTagsArray(hashTagsField.value);
     var result = [];
 
@@ -129,7 +130,8 @@
     setHashTagsFieldState(hashTagsEl, isHashTagsFieldInvalid(hashTagsEl));
   };
 
-  var validateForm = function () {
+  var validateForm = function (evt) {
+    // evt.preventDefault();
     validateHashTagsField();
     validateCommentField();
   };
@@ -138,4 +140,20 @@
   imgUploadForm.addEventListener('submit', validateForm);
   commentEl.addEventListener('input', validateCommentField);
   hashTagsEl.addEventListener('input', validateHashTagsField);
+
+
+  var UPLOAD_URL = 'https://js.dump.academy/kekstagram';
+  var uploadSuccess = function () {
+    alert('uploaded!');
+  };
+  var uploadError = function () {
+    alert('upload error!');
+  };
+  imgUploadForm.addEventListener('submit', function () {
+    var uploadData = new FormData(imgUploadForm);
+    uploadData.append('test', 'sth to test');
+    console.log('uploadData: ', uploadData);
+    window.backend.upload(UPLOAD_URL, uploadData, uploadSuccess, uploadError);
+    document.write('test');
+  });
 })();
