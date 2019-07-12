@@ -1,14 +1,17 @@
 'use strict';
 
 (function () {
-  // есть тема не делать две отдельные похожие функции download и upload,
-  // а сделать функцию createRequest, а в ней параметром указывать метод (GET, POST)
-  var download = function (url, onSuccess, onError) {
+  var RESPONSE_CODE_OK = 200;
+  var TIMEOUT = 10000;
+  var REQUEST_GET = 'GET';
+  var REQUEST_POST = 'POST';
+
+  var createXHRequest = function (method, url, onSuccess, onError, data) {
     var xhr = new XMLHttpRequest();
     xhr.responseType = 'json';
 
     xhr.addEventListener('load', function () {
-      if (xhr.status === 200) {
+      if (xhr.status === RESPONSE_CODE_OK) {
         onSuccess(xhr.response);
       } else {
         onError('Статус ответа: ' + xhr.status + ' ' + xhr.statusText);
@@ -23,41 +26,23 @@
       onError('Запрос не успел выполниться за ' + xhr.timeout + ' мс');
     });
 
-    xhr.timeout = 10000;
+    xhr.timeout = TIMEOUT;
 
-    xhr.open('GET', url);
-    xhr.send();
-  };
-
-  var upload = function (url, data, onSuccess, onError) {
-    var xhr = new XMLHttpRequest();
-    xhr.responseType = 'json';
-
-    xhr.addEventListener('load', function () {
-      if (xhr.status === 200) {
-        onSuccess(xhr.response);
-      } else {
-        onError('Статус ответа: ' + xhr.status + ' ' + xhr.statusText);
-      }
-    });
-
-    xhr.addEventListener('error', function () {
-      onError('Произошла ошибка соединения');
-    });
-
-    xhr.addEventListener('timeout', function () {
-      onError('Сервер не ответил в течение ' + xhr.timeout + ' мс');
-    });
-
-    xhr.timeout = 10000;
-
-    xhr.open('POST', url);
-    xhr.send(data);
+    xhr.open(method, url);
+    if (data) {
+      xhr.send(data);
+    } else {
+      xhr.send();
+    }
   };
 
 
   window.backend = {
-    download: download,
-    upload: upload
+    download: function (url, onSuccess, onError) {
+      createXHRequest(REQUEST_GET, url, onSuccess, onError);
+    },
+    upload: function (url, data, onSuccess, onError) {
+      createXHRequest(REQUEST_POST, url, onSuccess, onError, data);
+    }
   };
 })();

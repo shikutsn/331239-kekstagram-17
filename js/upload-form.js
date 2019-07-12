@@ -320,7 +320,7 @@
     errorPopupAnotherBtnEl.addEventListener('click', function (evt) {
       evt.stopPropagation();
       closeImgEditWindow();
-      removeErrorEvtListeners();
+      removeErrorPopup();
       uploadFileEl.click();
     });
   };
