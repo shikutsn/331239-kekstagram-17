@@ -39,12 +39,16 @@
     };
   };
 
+  var isEscPressed = function (evt) {
+    return evt.keyCode === ESC_KEYCODE;
+  }
+
 
   window.util = {
-    ESC_KEYCODE: ESC_KEYCODE,
     getRandomNumber: getRandomNumber,
     getRandomArrayElement: getRandomArrayElement,
     shuffleArray: shuffleArray,
-    debounce: debounce
+    debounce: debounce,
+    isEscPressed: isEscPressed,
   };
 })();

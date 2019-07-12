@@ -78,9 +78,6 @@
   };
 
   var checkHashTagsFieldValidity = function (hashTagsField) {
-    // если возвращается не пустая строка, то в поле ошибки
-    // чтобы сократить код, переписать на ассоциативный массив?
-    // типа такого перебора: for (var key in data)
     var hashTagsArr = getHashTagsArray(hashTagsField.value);
     var validityArr = [];
 

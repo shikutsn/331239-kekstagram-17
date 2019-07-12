@@ -29,7 +29,7 @@
   };
 
   var onBigPictureEscPress = function (evt) {
-    if (evt.keyCode === window.util.ESC_KEYCODE) {
+    if (window.util.isEscPressed(evt)) {
       closeBigPicture();
     }
   };

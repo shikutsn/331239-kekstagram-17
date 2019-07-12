@@ -117,7 +117,7 @@
   };
 
   var onImgEditWindowEscPress = function (evt) {
-    if (evt.keyCode === window.util.ESC_KEYCODE
+    if (window.util.isEscPressed(evt)
     && document.activeElement !== commentEl
     && document.activeElement !== hashTagsEl) {
       closeImgEditWindow();
@@ -270,7 +270,7 @@
     };
 
     var onUploadSuccessEscPress = function (evt) {
-      if (evt.keyCode === window.util.ESC_KEYCODE) {
+      if (window.util.isEscPressed(evt)) {
         removeSuccessPopup();
       }
     };
@@ -302,7 +302,7 @@
     };
 
     var onUploadErrorEscPress = function (evt) {
-      if (evt.keyCode === window.util.ESC_KEYCODE) {
+      if (window.util.isEscPressed(evt)) {
         removeErrorPopup();
       }
     };
@@ -327,9 +327,9 @@
 
 
   imgUploadFormEl.addEventListener('submit', function (evt) {
-    var result = window.validation.validateForm();
+    var isformValid = window.validation.validateForm();
     var uploadData = new FormData(imgUploadFormEl);
-    if (result) {
+    if (isformValid) {
       evt.preventDefault();
       window.backend.upload(UPLOAD_URL, uploadData, uploadSuccess, uploadError);
     }
