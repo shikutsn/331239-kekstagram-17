@@ -41,7 +41,7 @@
 
   var isEscPressed = function (evt) {
     return evt.keyCode === ESC_KEYCODE;
-  }
+  };
 
 
   window.util = {
