@@ -60,6 +60,9 @@
       UNIT: ''
     }
   };
+  var FILE_TYPES = ['gif', 'jpg', 'jpeg', 'png'];
+  var defaultPreviewImg = 'img/upload-default-image.jpg';
+  var UPLOAD_URL = 'https://js.dump.academy/kekstagram';
 
   var uploadFileEl = document.querySelector('#upload-file');
 
@@ -76,9 +79,16 @@
   var sliderLineEl = imgEditWindowEl.querySelector('.effect-level__line');
   var sliderDepthEl = imgEditWindowEl.querySelector('.effect-level__depth');
   var sliderValueEl = imgEditWindowEl.querySelector('.effect-level__value');
+  var imgUploadFormEl = document.querySelector('.img-upload__form');
   var commentEl = imgEditWindowEl.querySelector('.text__description');
   var hashTagsEl = imgEditWindowEl.querySelector('.text__hashtags');
-
+  var mainEl = document.querySelector('main');
+  var successTemplate = document.querySelector('#success')
+    .content
+    .querySelector('.success');
+  var errorTemplate = document.querySelector('#error')
+    .content
+    .querySelector('.error');
 
   var getFilterValue = function (key, value) {
     // превращает значение [0, 1] в корректный диапазон значений фильтра
@@ -133,6 +143,9 @@
   var closeImgEditWindow = function () {
     imgEditWindowEl.classList.add('hidden');
     uploadFileEl.value = '';
+    hashTagsEl.value = '';
+    commentEl.value = '';
+    imgUploadPreviewEl.src = defaultPreviewImg;
     imgEditWindowCloseEl.removeEventListener('click', closeImgEditWindow);
     document.removeEventListener('keydown', onImgEditWindowEscPress);
   };
@@ -165,7 +178,29 @@
     incrementImgScale(imgUploadPreviewEl, scaleValueEl);
   });
 
-  uploadFileEl.addEventListener('change', openImgEditWindow);
+  var loadImgFromDisc = function (fileEl, previewEl) {
+    var file = fileEl.files[0];
+    var fileName = file.name.toLowerCase();
+
+    var matches = FILE_TYPES.some(function (it) {
+      return fileName.endsWith(it);
+    });
+
+    if (matches) {
+      var reader = new FileReader();
+
+      reader.addEventListener('load', function () {
+        previewEl.src = reader.result;
+      });
+
+      reader.readAsDataURL(file);
+    }
+  };
+
+  uploadFileEl.addEventListener('change', function () {
+    loadImgFromDisc(uploadFileEl, imgUploadPreviewEl);
+    openImgEditWindow();
+  });
 
 
   var addEffectsChangeListeners = function (effectsEl) {
@@ -217,9 +252,86 @@
   });
 
 
+  var uploadSuccess = function () {
+    closeImgEditWindow();
 
-  // открываем окно добавления изображения для отладки
-  // console.log('upload-form debug');
-  // openImgEditWindow();
-  // uploadFileEl.removeAttribute('required');
+    var successPopupEl = successTemplate.cloneNode(true);
+    mainEl.appendChild(successPopupEl);
+
+    var successPopupCloseBtnEl = document.querySelector('.success__button');
+
+    var removeSuccessPopup = function () {
+      if (mainEl.contains(successPopupEl)) {
+        mainEl.removeChild(successPopupEl);
+      }
+      successPopupCloseBtnEl.removeEventListener('click', removeSuccessPopup);
+      window.removeEventListener('click', removeSuccessPopup);
+      document.removeEventListener('keydown', onUploadSuccessEscPress);
+    };
+
+    var onUploadSuccessEscPress = function (evt) {
+      if (evt.keyCode === window.util.ESC_KEYCODE) {
+        removeSuccessPopup();
+      }
+    };
+
+    successPopupCloseBtnEl.addEventListener('click', removeSuccessPopup);
+    window.addEventListener('click', removeSuccessPopup);
+    document.addEventListener('keydown', onUploadSuccessEscPress);
+  };
+
+  var uploadError = function () {
+    imgEditWindowEl.classList.add('hidden');
+
+    var errorPopupEl = errorTemplate.cloneNode(true);
+    mainEl.appendChild(errorPopupEl);
+
+    var errorPopupAgainBtnEl = document.querySelector('.error__button--again');
+    var errorPopupAnotherBtnEl = document.querySelector('.error__button--another');
+
+    var removeErrorEvtListeners = function () {
+      window.removeEventListener('click', removeErrorPopup);
+      document.removeEventListener('keydown', removeErrorPopup);
+    };
+
+    var removeErrorPopup = function () {
+      if (mainEl.contains(errorPopupEl)) {
+        mainEl.removeChild(errorPopupEl);
+      }
+      removeErrorEvtListeners();
+    };
+
+    var onUploadErrorEscPress = function (evt) {
+      if (evt.keyCode === window.util.ESC_KEYCODE) {
+        removeErrorPopup();
+      }
+    };
+
+    window.addEventListener('click', removeErrorPopup);
+    document.addEventListener('keydown', onUploadErrorEscPress);
+
+    errorPopupAgainBtnEl.addEventListener('click', function (evt) {
+      evt.stopPropagation();
+      mainEl.removeChild(errorPopupEl);
+      imgEditWindowEl.classList.remove('hidden');
+      removeErrorEvtListeners();
+    });
+
+    errorPopupAnotherBtnEl.addEventListener('click', function (evt) {
+      evt.stopPropagation();
+      closeImgEditWindow();
+      removeErrorEvtListeners();
+      uploadFileEl.click();
+    });
+  };
+
+
+  imgUploadFormEl.addEventListener('submit', function (evt) {
+    var result = window.validation.validateForm();
+    var uploadData = new FormData(imgUploadFormEl);
+    if (result) {
+      evt.preventDefault();
+      window.backend.upload(UPLOAD_URL, uploadData, uploadSuccess, uploadError);
+    }
+  });
 })();

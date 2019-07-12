@@ -28,9 +28,9 @@
     VALID: 'none'
   };
 
-  var imgUploadForm = document.querySelector('.img-upload__form');
-  var commentEl = imgUploadForm.querySelector('.text__description');
-  var hashTagsEl = imgUploadForm.querySelector('.text__hashtags');
+  var imgUploadFormEl = document.querySelector('.img-upload__form');
+  var commentEl = imgUploadFormEl.querySelector('.text__description');
+  var hashTagsEl = imgUploadFormEl.querySelector('.text__hashtags');
 
 
   var isCommentFieldValid = function (commentField) {
@@ -46,9 +46,6 @@
       commentField.style[InvalidFieldStyles.VALIDITY] = InvalidFieldStyles.INVALID;
     }
   };
-
-  // для тестов заполним поле хэш-тегов
-  // hashTagsEl.value = ' #asdj    #d123 #d123 #aee asd #asdlkjsadlkadjsasdlkjqwe ';
 
   var getHashTagsArray = function (hashTagsString) {
     return hashTagsString.split(HashTagsValidationData.SEPARATOR).filter(function (it) {
@@ -80,80 +77,64 @@
     return hashTagsArr.length <= HashTagsValidationData.MAX_QUANTITY;
   };
 
-  // var hashTags = getHashTagsArray(hashTagsEl.value);
-  // console.log('value: ', hashTagsEl.value);
-  // console.log('hashtags array: ', hashTags);
-  // console.log('Проверка на то, что начинаются с решетки: ' + isHashTagsFirstSymbolCorrect(hashTags));
-  // console.log('Проверка на макс кол-во: ' + isHashTagsMaxQuantityCorrect(hashTags));
-  // console.log('Проверка на уникальность: ' + isHashTagsUniquenessCorrect(hashTags));
-  // console.log('Проверка на правильную длину: ' + isHashTagsLengthCorrect(hashTags));
-
-
-  var isHashTagsFieldInvalid = function (hashTagsField) {
+  var checkHashTagsFieldValidity = function (hashTagsField) {
     // если возвращается не пустая строка, то в поле ошибки
     // чтобы сократить код, переписать на ассоциативный массив?
     // типа такого перебора: for (var key in data)
     var hashTagsArr = getHashTagsArray(hashTagsField.value);
-    var result = [];
+    var validityArr = [];
 
     if (!isHashTagsFirstSymbolCorrect(hashTagsArr)) {
-      result.push(HashTagsValidationData.INVALID_TEXT.FIRST_SYMBOL);
+      validityArr.push(HashTagsValidationData.INVALID_TEXT.FIRST_SYMBOL);
     }
     if (!isHashTagsLengthCorrect(hashTagsArr)) {
-      result.push(HashTagsValidationData.INVALID_TEXT.LENGTH);
+      validityArr.push(HashTagsValidationData.INVALID_TEXT.LENGTH);
     }
     if (!isHashTagsUniquenessCorrect(hashTagsArr)) {
-      result.push(HashTagsValidationData.INVALID_TEXT.UNIQUENESS);
+      validityArr.push(HashTagsValidationData.INVALID_TEXT.UNIQUENESS);
     }
     if (!isHashTagsMaxQuantityCorrect(hashTagsArr)) {
-      result.push(HashTagsValidationData.INVALID_TEXT.QUANTITY);
+      validityArr.push(HashTagsValidationData.INVALID_TEXT.QUANTITY);
     }
 
-    return result.join(' ');
+    return {
+      isValid: !validityArr.length,
+      invalidMsg: validityArr.join(' ')
+    };
   };
 
-  var setHashTagsFieldState = function (hashTagsField, isInvalid) {
-    if (!isInvalid) {
+  var setHashTagsFieldState = function (hashTagsField, validity) {
+    if (validity.isValid) {
       hashTagsField.setCustomValidity('');
       hashTagsField.style[InvalidFieldStyles.VALIDITY] = InvalidFieldStyles.VALID;
     } else {
-      hashTagsField.setCustomValidity(isInvalid);
+      hashTagsField.setCustomValidity(validity.invalidMsg);
       hashTagsField.style[InvalidFieldStyles.VALIDITY] = InvalidFieldStyles.INVALID;
     }
   };
 
   var validateCommentField = function () {
-    setCommentFieldState(commentEl, isCommentFieldValid(commentEl));
+    var result = isCommentFieldValid(commentEl);
+    setCommentFieldState(commentEl, result);
+    return result;
   };
 
   var validateHashTagsField = function () {
-    setHashTagsFieldState(hashTagsEl, isHashTagsFieldInvalid(hashTagsEl));
+    var hashTagsFieldValidity = checkHashTagsFieldValidity(hashTagsEl);
+    setHashTagsFieldState(hashTagsEl, hashTagsFieldValidity);
+    return hashTagsFieldValidity.isValid;
   };
 
-  var validateForm = function (evt) {
-    // evt.preventDefault();
-    validateHashTagsField();
-    validateCommentField();
+  var validateForm = function () {
+    return (validateHashTagsField() && validateCommentField());
   };
 
 
-  imgUploadForm.addEventListener('submit', validateForm);
   commentEl.addEventListener('input', validateCommentField);
   hashTagsEl.addEventListener('input', validateHashTagsField);
 
 
-  var UPLOAD_URL = 'https://js.dump.academy/kekstagram';
-  var uploadSuccess = function () {
-    alert('uploaded!');
+  window.validation = {
+    validateForm: validateForm
   };
-  var uploadError = function () {
-    alert('upload error!');
-  };
-  imgUploadForm.addEventListener('submit', function () {
-    var uploadData = new FormData(imgUploadForm);
-    uploadData.append('test', 'sth to test');
-    console.log('uploadData: ', uploadData);
-    window.backend.upload(UPLOAD_URL, uploadData, uploadSuccess, uploadError);
-    document.write('test');
-  });
 })();
