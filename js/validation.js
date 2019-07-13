@@ -13,12 +13,41 @@
     LENGTH: {
       MIN: 2,
       MAX: 20
+    }
+  };
+
+  var ValidityChecksMap = {
+    first: {
+      ACTION: function (hashTagsArr) {
+        return hashTagsArr.every(function (it) {
+          return it.charAt(0) === HashTagsValidationData.FIRST_SYMBOL;
+        });
+      },
+      INVALID_TEXT: 'Хэш-тег должен начинаться с символа #.'
     },
-    INVALID_TEXT: {
-      FIRST_SYMBOL: 'Хэш-тег должен начинаться с символа #.',
-      LENGTH: 'Длина хэш-тега не меньше 2 и не больше 20 символов.',
-      UNIQUENESS: 'Не должно быть одинаковых хэш-тегов.',
-      QUANTITY: 'Не больше 5 хэш-тегов.'
+    second: {
+      ACTION: function (hashTagsArr) {
+        return !hashTagsArr.some(function (it) {
+          return it.length < HashTagsValidationData.LENGTH.MIN || it.length > HashTagsValidationData.LENGTH.MAX;
+        });
+      },
+      INVALID_TEXT: 'Длина хэш-тега не меньше 2 и не больше 20 символов.'
+    },
+    third: {
+      ACTION: function (hashTagsArr) {
+        return hashTagsArr.length === hashTagsArr.filter(function (it, i, arr) {
+          return arr.indexOf(it) === i;
+        }).length;
+      },
+      INVALID_TEXT: 'Не должно быть одинаковых хэш-тегов.'
+    },
+    fourth: {
+      ACTION: function (hashTagsArr) {
+        return hashTagsArr.length === hashTagsArr.filter(function (it, i, arr) {
+          return arr.indexOf(it) === i;
+        }).length;
+      },
+      INVALID_TEXT: 'Не больше 5 хэш-тегов.'
     }
   };
 
@@ -55,43 +84,18 @@
     });
   };
 
-  var isHashTagsFirstSymbolCorrect = function (hashTagsArr) {
-    return hashTagsArr.every(function (it) {
-      return it.charAt(0) === HashTagsValidationData.FIRST_SYMBOL;
-    });
-  };
-
-  var isHashTagsLengthCorrect = function (hashTagsArr) {
-    return !hashTagsArr.some(function (it) {
-      return it.length < HashTagsValidationData.LENGTH.MIN || it.length > HashTagsValidationData.LENGTH.MAX;
-    });
-  };
-
-  var isHashTagsUniquenessCorrect = function (hashTagsArr) {
-    return hashTagsArr.length === hashTagsArr.filter(function (it, i, arr) {
-      return arr.indexOf(it) === i;
-    }).length;
-  };
-
-  var isHashTagsMaxQuantityCorrect = function (hashTagsArr) {
-    return hashTagsArr.length <= HashTagsValidationData.MAX_QUANTITY;
-  };
-
   var checkHashTagsFieldValidity = function (hashTagsField) {
     var hashTagsArr = getHashTagsArray(hashTagsField.value);
     var validityArr = [];
 
-    if (!isHashTagsFirstSymbolCorrect(hashTagsArr)) {
-      validityArr.push(HashTagsValidationData.INVALID_TEXT.FIRST_SYMBOL);
-    }
-    if (!isHashTagsLengthCorrect(hashTagsArr)) {
-      validityArr.push(HashTagsValidationData.INVALID_TEXT.LENGTH);
-    }
-    if (!isHashTagsUniquenessCorrect(hashTagsArr)) {
-      validityArr.push(HashTagsValidationData.INVALID_TEXT.UNIQUENESS);
-    }
-    if (!isHashTagsMaxQuantityCorrect(hashTagsArr)) {
-      validityArr.push(HashTagsValidationData.INVALID_TEXT.QUANTITY);
+    for (var key in ValidityChecksMap) {
+      if (ValidityChecksMap.hasOwnProperty(key)) {
+        var currentCheck = ValidityChecksMap[key].ACTION;
+        console.log(currentCheck);
+        if (!currentCheck(hashTagsArr)) {
+          validityArr.push(ValidityChecksMap[key].INVALID_TEXT);
+        }
+      }
     }
 
     return {
