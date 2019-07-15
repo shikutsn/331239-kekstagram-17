@@ -18,8 +18,8 @@
   var comments;
 
 
-  var getCommentElement = function (comment, template) {
-    var result = template.cloneNode(true);
+  var getCommentElement = function (comment) {
+    var result = commentTemplateEl.cloneNode(true);
     var commentAvatar = result.querySelector('.social__picture');
 
     commentAvatar.src = comment.avatar;
@@ -57,7 +57,7 @@
     var commentsTotalCount = comments.length;
 
     comments.slice(commentsRenderedCount, commentsRenderedCount + COMMENTS_PER_PAGE).forEach(function (item) {
-      commentsListEl.appendChild(getCommentElement(item, commentTemplateEl));
+      commentsListEl.appendChild(getCommentElement(item));
     });
 
     commentsRenderedCount += COMMENTS_PER_PAGE;
@@ -95,6 +95,7 @@
 
       clearRenderedComments();
       renderComments();
+
 
       closeButtonEl.addEventListener('click', closeBigPicture);
       document.addEventListener('keydown', onBigPictureEscPress);

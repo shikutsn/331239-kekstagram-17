@@ -42,6 +42,7 @@
     }
   };
 
+  // немного переделать - чтобы кнопка фильтра красилась сразу, а галерея отображалась с задержкой
   var onFiltersFormClickDebounced = window.util.debounce(onFiltersFormClick);
 
   var showFiltersForm = function () {
