@@ -43,8 +43,7 @@
 
   var photos = [];
   var discussedPhotos = [];
-  var renderedPhotos = [];
-
+  var newPhotos = [];
 
   var getRandomComment = function (quantity) {
     var comments = [];
@@ -79,8 +78,10 @@
   };
 
   var getNew = function () {
-    renderedPhotos = window.util.shuffleArray(photos).slice(0, NEW_PHOTOS_QUANTITY);
-    return renderedPhotos;
+    if (!newPhotos.length) {
+      newPhotos = window.util.shuffleArray(photos).slice(0, NEW_PHOTOS_QUANTITY);
+    }
+    return newPhotos;
   };
 
   var getDiscussed = function () {
@@ -89,23 +90,21 @@
         return b.comments.length - a.comments.length;
       });
     }
-    renderedPhotos = discussedPhotos;
     return discussedPhotos;
   };
 
   var getPopular = function () {
-    renderedPhotos = photos;
     return photos;
   };
 
   var setData = function (data) {
     photos = data;
     getDiscussed();
-    renderedPhotos = data;
   };
 
+
   var getRenderedPhotos = function () {
-    return renderedPhotos;
+    return window.filters.FiltersMap[window.filters.getCurrentFilter()]();
   };
 
 

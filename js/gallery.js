@@ -22,6 +22,9 @@
   };
 
   var renderGallery = function (photos) {
+    // TODO: или хранить массив текущих отрендеренных фоток тут, в модуле галереи?
+    // TODO: ну и функцию по возврату тоже
+
     var pictureTemplate = document.querySelector('#picture')
       .content
       .querySelector('.picture');

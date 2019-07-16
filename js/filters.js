@@ -14,6 +14,15 @@
   var imgFiltersFormEl = document.querySelector('.img-filters__form');
   var buttonsEl = imgFiltersFormEl.querySelectorAll('.' + ButtonCls.DEFAULT);
 
+  var getCurrentFilter = function () {
+    var result = '';
+    buttonsEl.forEach(function (element) {
+      if (element.classList.contains(ButtonCls.ACTIVE)) {
+        result = element.id;
+      }
+    });
+    return result;
+  };
 
   var switchActiveButton = function (activeButton) {
     buttonsEl.forEach(function (element) {
@@ -42,7 +51,6 @@
     }
   };
 
-  // немного переделать - чтобы кнопка фильтра красилась сразу, а галерея отображалась с задержкой
   var onFiltersFormClickDebounced = window.util.debounce(onFiltersFormClick);
 
   var showFiltersForm = function () {
@@ -54,6 +62,8 @@
 
 
   window.filters = {
-    showFiltersForm: showFiltersForm
+    showFiltersForm: showFiltersForm,
+    getCurrentFilter: getCurrentFilter,
+    FiltersMap: FiltersMap
   };
 })();
