@@ -68,13 +68,13 @@
   };
 
   var getPhotos = function (quantity) {
-    var output = [];
+    var result = [];
 
     for (var i = 1; i <= quantity; i++) {
-      output.push(getRandomPhoto(i));
+      result.push(getRandomPhoto(i));
     }
 
-    return output;
+    return result;
   };
 
   var getNew = function () {
