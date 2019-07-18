@@ -61,7 +61,7 @@
     }
   };
   var FILE_TYPES = ['gif', 'jpg', 'jpeg', 'png'];
-  var defaultPreviewImg = 'img/upload-default-image.jpg';
+  var DEFAULT_PREVIEW_IMAGE = 'img/upload-default-image.jpg';
   var UPLOAD_URL = 'https://js.dump.academy/kekstagram';
 
   var uploadFileEl = document.querySelector('#upload-file');
@@ -145,7 +145,7 @@
     uploadFileEl.value = '';
     hashTagsEl.value = '';
     commentEl.value = '';
-    imgUploadPreviewEl.src = defaultPreviewImg;
+    imgUploadPreviewEl.src = DEFAULT_PREVIEW_IMAGE;
     imgEditWindowCloseEl.removeEventListener('click', closeImgEditWindow);
     document.removeEventListener('keydown', onImgEditWindowEscPress);
   };
@@ -178,7 +178,7 @@
     incrementImgScale(imgUploadPreviewEl, scaleValueEl);
   });
 
-  var loadImgFromDisc = function (fileEl, previewEl) {
+  var loadImgFromDisc = function (fileEl, imageEl) {
     var file = fileEl.files[0];
     var fileName = file.name.toLowerCase();
 
@@ -190,7 +190,7 @@
       var reader = new FileReader();
 
       reader.addEventListener('load', function () {
-        previewEl.src = reader.result;
+        imageEl.src = reader.result;
       });
 
       reader.readAsDataURL(file);
@@ -321,6 +321,8 @@
       evt.stopPropagation();
       closeImgEditWindow();
       removeErrorPopup();
+      // TODO: вызывать вручную событие обработки этого клика, потому что генерить события просто так - это плохая практика
+      // но, с другой стороны, а как еще его именно что открыть?
       uploadFileEl.click();
     });
   };

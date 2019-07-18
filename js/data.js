@@ -103,17 +103,11 @@
   };
 
 
-  var getRenderedPhotos = function () {
-    return window.filters.FiltersMap[window.filters.getCurrentFilter()]();
-  };
-
-
   window.data = {
     getNew: getNew,
     getDiscussed: getDiscussed,
     getPopular: getPopular,
     setData: setData,
-    getRenderedPhotos: getRenderedPhotos,
     getMockData: function (onDataLoaded) {
       onDataLoaded(getPhotos(PHOTOS_COUNT));
     }

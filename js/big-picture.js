@@ -78,11 +78,14 @@
     pictureDescriptionEl.textContent = photo.description;
   };
 
+  var getRenderedPhotos = function () {
+    return window.filters.FiltersMap[window.filters.getCurrentFilter()]();
+  };
 
   var openBigPicture = function (evt) {
     var clickedPicture = evt.target.closest('.picture');
     if (clickedPicture) {
-      var renderedPhotos = window.data.getRenderedPhotos();
+      var renderedPhotos = getRenderedPhotos();
       var clickedPictureIndex = Array.from(document.querySelectorAll('.picture')).indexOf(clickedPicture);
 
       commentsRenderedCount = 0;

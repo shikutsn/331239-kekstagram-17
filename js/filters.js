@@ -15,13 +15,7 @@
   var buttonsEl = imgFiltersFormEl.querySelectorAll('.' + ButtonCls.DEFAULT);
 
   var getCurrentFilter = function () {
-    var result = '';
-    buttonsEl.forEach(function (element) {
-      if (element.classList.contains(ButtonCls.ACTIVE)) {
-        result = element.id;
-      }
-    });
-    return result;
+    return imgFiltersFormEl.querySelector('.' + ButtonCls.ACTIVE).id;
   };
 
   var switchActiveButton = function (activeButton) {
@@ -34,17 +28,11 @@
     });
   };
 
-  var clearCurrentPictures = function () {
-    document.querySelectorAll('.picture').forEach(function (element) {
-      element.remove();
-    });
-  };
-
   var onFiltersFormClick = function (evt) {
     var pressedButton = evt.target.closest('.' + ButtonCls.DEFAULT);
 
     if (pressedButton) {
-      clearCurrentPictures();
+      window.gallery.clearCurrentPictures();
       switchActiveButton(pressedButton);
 
       window.gallery.renderGallery(FiltersMap[pressedButton.id]());

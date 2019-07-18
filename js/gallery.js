@@ -22,9 +22,6 @@
   };
 
   var renderGallery = function (photos) {
-    // TODO: или хранить массив текущих отрендеренных фоток тут, в модуле галереи?
-    // TODO: ну и функцию по возврату тоже
-
     var pictureTemplate = document.querySelector('#picture')
       .content
       .querySelector('.picture');
@@ -34,8 +31,15 @@
     picturesEl.appendChild(fragment);
   };
 
+  var clearCurrentPictures = function () {
+    document.querySelectorAll('.picture').forEach(function (element) {
+      element.remove();
+    });
+  };
+
 
   window.gallery = {
-    renderGallery: renderGallery
+    renderGallery: renderGallery,
+    clearCurrentPictures: clearCurrentPictures
   };
 })();
