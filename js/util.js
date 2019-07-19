@@ -6,7 +6,6 @@
 
   var getRandomNumber = function (min, max) {
     // случайное целое число из полуинтервала [min, max)
-    // BUG: используется после удаления мок-данных?
     return Math.floor(Math.random() * (max - min)) + min;
   };
 
