@@ -13,9 +13,10 @@
   var pictureDescriptionEl = bigPictureEl.querySelector('.social__caption');
   var closeButtonEl = bigPictureEl.querySelector('.big-picture__cancel');
   var commentTemplateEl = bigPictureEl.querySelector('.social__comment');
+  var picturesEl = document.querySelector('.pictures');
 
   var commentsRenderedCount;
-  var comments;
+  var currentPictureIndex;
 
 
   var getCommentElement = function (comment) {
@@ -53,7 +54,12 @@
     commentsTotalCountEl.textContent = commentsTotal;
   };
 
+  var getRenderedPhotos = function () {
+    return window.filters.FiltersMap[window.filters.getCurrentFilter()]();
+  };
+
   var renderComments = function () {
+    var comments = getRenderedPhotos()[currentPictureIndex].comments;
     var commentsTotalCount = comments.length;
 
     comments.slice(commentsRenderedCount, commentsRenderedCount + COMMENTS_PER_PAGE).forEach(function (item) {
@@ -78,23 +84,18 @@
     pictureDescriptionEl.textContent = photo.description;
   };
 
-  var getRenderedPhotos = function () {
-    return window.filters.FiltersMap[window.filters.getCurrentFilter()]();
-  };
-
   var openBigPicture = function (evt) {
     var clickedPicture = evt.target.closest('.picture');
     if (clickedPicture) {
-      var renderedPhotos = getRenderedPhotos();
-      var clickedPictureIndex = Array.from(document.querySelectorAll('.picture')).indexOf(clickedPicture);
+      currentPictureIndex = Array.from(document.querySelectorAll('.picture')).indexOf(clickedPicture);
+      var clickedPhoto = getRenderedPhotos()[currentPictureIndex];
 
       commentsRenderedCount = 0;
-      comments = renderedPhotos[clickedPictureIndex].comments;
 
       bigPictureEl.classList.remove('hidden');
       document.body.classList.add('modal-open');
 
-      renderBigPicture(renderedPhotos[clickedPictureIndex]);
+      renderBigPicture(clickedPhoto);
 
       clearRenderedComments();
       renderComments();
@@ -106,5 +107,5 @@
     }
   };
 
-  document.querySelector('.pictures').addEventListener('click', openBigPicture);
+  picturesEl.addEventListener('click', openBigPicture);
 })();
