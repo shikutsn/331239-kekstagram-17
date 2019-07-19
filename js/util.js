@@ -6,11 +6,8 @@
 
   var getRandomNumber = function (min, max) {
     // случайное целое число из полуинтервала [min, max)
+    // BUG: используется после удаления мок-данных?
     return Math.floor(Math.random() * (max - min)) + min;
-  };
-
-  var getRandomArrayElement = function (arr) {
-    return arr[getRandomNumber(0, arr.length)];
   };
 
   var shuffleArray = function (arr) {
@@ -46,7 +43,6 @@
 
   window.util = {
     getRandomNumber: getRandomNumber,
-    getRandomArrayElement: getRandomArrayElement,
     shuffleArray: shuffleArray,
     debounce: debounce,
     isEscPressed: isEscPressed,

@@ -6,6 +6,7 @@
     'filter-new': window.data.getNew,
     'filter-discussed': window.data.getDiscussed
   };
+
   var ButtonCls = {
     DEFAULT: 'img-filters__button',
     ACTIVE: 'img-filters__button--active'
@@ -13,6 +14,7 @@
 
   var imgFiltersFormEl = document.querySelector('.img-filters__form');
   var buttonsEl = imgFiltersFormEl.querySelectorAll('.' + ButtonCls.DEFAULT);
+
 
   var getCurrentFilter = function () {
     return imgFiltersFormEl.querySelector('.' + ButtonCls.ACTIVE).id;
@@ -34,7 +36,6 @@
     if (pressedButton) {
       window.gallery.clearCurrentPictures();
       switchActiveButton(pressedButton);
-
       window.gallery.renderGallery(FiltersMap[pressedButton.id]());
     }
   };
