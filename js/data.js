@@ -43,7 +43,7 @@
 
   var photos = [];
   var discussedPhotos = [];
-
+  var newPhotos = [];
 
   var getRandomComment = function (quantity) {
     var comments = [];
@@ -68,17 +68,20 @@
   };
 
   var getPhotos = function (quantity) {
-    var output = [];
+    var result = [];
 
     for (var i = 1; i <= quantity; i++) {
-      output.push(getRandomPhoto(i));
+      result.push(getRandomPhoto(i));
     }
 
-    return output;
+    return result;
   };
 
   var getNew = function () {
-    return window.util.shuffleArray(photos).slice(0, NEW_PHOTOS_QUANTITY);
+    if (!newPhotos.length) {
+      newPhotos = window.util.shuffleArray(photos).slice(0, NEW_PHOTOS_QUANTITY);
+    }
+    return newPhotos;
   };
 
   var getDiscussed = function () {
