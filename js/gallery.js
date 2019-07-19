@@ -31,8 +31,15 @@
     picturesEl.appendChild(fragment);
   };
 
+  var clearCurrentPictures = function () {
+    document.querySelectorAll('.picture').forEach(function (element) {
+      element.remove();
+    });
+  };
+
 
   window.gallery = {
-    renderGallery: renderGallery
+    renderGallery: renderGallery,
+    clearCurrentPictures: clearCurrentPictures
   };
 })();

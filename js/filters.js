@@ -6,6 +6,7 @@
     'filter-new': window.data.getNew,
     'filter-discussed': window.data.getDiscussed
   };
+
   var ButtonCls = {
     DEFAULT: 'img-filters__button',
     ACTIVE: 'img-filters__button--active'
@@ -14,6 +15,10 @@
   var imgFiltersFormEl = document.querySelector('.img-filters__form');
   var buttonsEl = imgFiltersFormEl.querySelectorAll('.' + ButtonCls.DEFAULT);
 
+
+  var getCurrentFilter = function () {
+    return imgFiltersFormEl.querySelector('.' + ButtonCls.ACTIVE).id;
+  };
 
   var switchActiveButton = function (activeButton) {
     buttonsEl.forEach(function (element) {
@@ -25,19 +30,14 @@
     });
   };
 
-  var clearCurrentPictures = function () {
-    document.querySelectorAll('.picture').forEach(function (element) {
-      element.remove();
-    });
-  };
-
   var onFiltersFormClick = function (evt) {
     var pressedButton = evt.target.closest('.' + ButtonCls.DEFAULT);
 
-    clearCurrentPictures();
-    switchActiveButton(pressedButton);
-
-    window.gallery.renderGallery(FiltersMap[pressedButton.id]());
+    if (pressedButton) {
+      window.gallery.clearCurrentPictures();
+      switchActiveButton(pressedButton);
+      window.gallery.renderGallery(FiltersMap[pressedButton.id]());
+    }
   };
 
   var onFiltersFormClickDebounced = window.util.debounce(onFiltersFormClick);
@@ -51,6 +51,8 @@
 
 
   window.filters = {
-    showFiltersForm: showFiltersForm
+    showFiltersForm: showFiltersForm,
+    getCurrentFilter: getCurrentFilter,
+    FiltersMap: FiltersMap
   };
 })();

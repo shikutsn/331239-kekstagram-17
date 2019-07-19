@@ -3,17 +3,18 @@
 (function () {
   var DOWNLOAD_URL = 'https://js.dump.academy/kekstagram/data';
 
-  var onLoadingError = function (errorMessage) {
-    var node = document.createElement('div');
-    node.style = 'z-index: 100; margin: 0 auto; text-align: center; background-color: red;';
-    node.style.position = 'absolute';
-    node.style.padding = '20px';
-    node.style.width = '100%';
-    node.style.left = 0;
-    node.style.fontSize = '30px';
 
-    node.textContent = errorMessage;
-    document.body.insertAdjacentElement('afterbegin', node);
+  var onLoadingError = function (errorMessage) {
+    var loadingErrorEl = document.createElement('div');
+    loadingErrorEl.style = 'z-index: 100; margin: 0 auto; text-align: center; background-color: red;';
+    loadingErrorEl.style.position = 'absolute';
+    loadingErrorEl.style.padding = '20px';
+    loadingErrorEl.style.width = '100%';
+    loadingErrorEl.style.left = 0;
+    loadingErrorEl.style.fontSize = '30px';
+
+    loadingErrorEl.textContent = errorMessage;
+    document.body.insertAdjacentElement('afterbegin', loadingErrorEl);
   };
 
   var onLoadingSuccess = function (photos) {
@@ -23,5 +24,5 @@
   };
 
 
-  window.backend.load(DOWNLOAD_URL, onLoadingSuccess, onLoadingError);
+  window.backend.download(DOWNLOAD_URL, onLoadingSuccess, onLoadingError);
 })();

@@ -1,12 +1,20 @@
 'use strict';
 
 (function () {
-  var load = function (url, onSuccess, onError) {
+  var RESPONSE_CODE_OK = 200;
+  var TIMEOUT = 10000;
+  var Request = {
+    GET: 'GET',
+    POST: 'POST'
+  };
+
+
+  var createXHRequest = function (method, url, onSuccess, onError, data) {
     var xhr = new XMLHttpRequest();
     xhr.responseType = 'json';
 
     xhr.addEventListener('load', function () {
-      if (xhr.status === 200) {
+      if (xhr.status === RESPONSE_CODE_OK) {
         onSuccess(xhr.response);
       } else {
         onError('Статус ответа: ' + xhr.status + ' ' + xhr.statusText);
@@ -21,14 +29,23 @@
       onError('Запрос не успел выполниться за ' + xhr.timeout + ' мс');
     });
 
-    xhr.timeout = 10000;
+    xhr.timeout = TIMEOUT;
 
-    xhr.open('GET', url);
-    xhr.send();
+    xhr.open(method, url);
+    if (data) {
+      xhr.send(data);
+    } else {
+      xhr.send();
+    }
   };
 
 
   window.backend = {
-    load: load
+    download: function (url, onSuccess, onError) {
+      createXHRequest(Request.GET, url, onSuccess, onError);
+    },
+    upload: function (url, data, onSuccess, onError) {
+      createXHRequest(Request.POST, url, onSuccess, onError, data);
+    }
   };
 })();

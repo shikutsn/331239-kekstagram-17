@@ -2,14 +2,12 @@
 
 (function () {
   var DEBOUNCE_INTERVAL = 500;
+  var ESC_KEYCODE = 27;
 
   var getRandomNumber = function (min, max) {
     // случайное целое число из полуинтервала [min, max)
+    // BUG: используется после удаления мок-данных?
     return Math.floor(Math.random() * (max - min)) + min;
-  };
-
-  var getRandomArrayElement = function (arr) {
-    return arr[getRandomNumber(0, arr.length)];
   };
 
   var shuffleArray = function (arr) {
@@ -38,11 +36,15 @@
     };
   };
 
+  var isEscPressed = function (evt) {
+    return evt.keyCode === ESC_KEYCODE;
+  };
+
 
   window.util = {
     getRandomNumber: getRandomNumber,
-    getRandomArrayElement: getRandomArrayElement,
     shuffleArray: shuffleArray,
-    debounce: debounce
+    debounce: debounce,
+    isEscPressed: isEscPressed,
   };
 })();
