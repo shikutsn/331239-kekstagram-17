@@ -16,7 +16,7 @@
 
   var NO_EFFECT_KEY = 'effect-none';
   var DATA_EFFECT = 'data-effect';
-  var FILTERS_TABLE = {
+  var FiltersTable = {
     'effect-none': {
       CLASS: 'effects__preview--none',
       TEXT: 'none',
@@ -61,7 +61,7 @@
     }
   };
   var FILE_TYPES = ['gif', 'jpg', 'jpeg', 'png'];
-  var DEFAULT_PREVIEW_IMAGE = 'img/upload-default-image.jpg';
+  var DEFAULT_PREVIEW_IMAGE_PATH = 'img/upload-default-image.jpg';
   var UPLOAD_URL = 'https://js.dump.academy/kekstagram';
 
   var uploadFileEl = document.querySelector('#upload-file');
@@ -90,13 +90,14 @@
     .content
     .querySelector('.error');
 
+
   var getFilterValue = function (key, value) {
     // превращает значение [0, 1] в корректный диапазон значений фильтра
-    return (FILTERS_TABLE[key].MAX - FILTERS_TABLE[key].MIN) * value + FILTERS_TABLE[key].MIN;
+    return (FiltersTable[key].MAX - FiltersTable[key].MIN) * value + FiltersTable[key].MIN;
   };
 
   var getFilterIntensity = function (key, value) {
-    return key === NO_EFFECT_KEY ? FILTERS_TABLE[key].TEXT : FILTERS_TABLE[key].TEXT + '(' + getFilterValue(key, value) + FILTERS_TABLE[key].UNIT + ')';
+    return key === NO_EFFECT_KEY ? FiltersTable[key].TEXT : FiltersTable[key].TEXT + '(' + getFilterValue(key, value) + FiltersTable[key].UNIT + ')';
   };
 
   var getSliderVisibilityText = function (key) {
@@ -105,7 +106,7 @@
 
   var applyEffect = function (key) {
     imgUploadPreviewEl.className = '';
-    imgUploadPreviewEl.classList.add(FILTERS_TABLE[key].CLASS);
+    imgUploadPreviewEl.classList.add(FiltersTable[key].CLASS);
     imgUploadPreviewEl.style.filter = getFilterIntensity(key, SliderConfig.DEFAULT_VALUE);
 
     sliderPinEl.style.left = SliderConfig.DEFAULT_PERCENT + '%';
@@ -145,7 +146,7 @@
     uploadFileEl.value = '';
     hashTagsEl.value = '';
     commentEl.value = '';
-    imgUploadPreviewEl.src = DEFAULT_PREVIEW_IMAGE;
+    imgUploadPreviewEl.src = DEFAULT_PREVIEW_IMAGE_PATH;
     imgEditWindowCloseEl.removeEventListener('click', closeImgEditWindow);
     document.removeEventListener('keydown', onImgEditWindowEscPress);
   };
