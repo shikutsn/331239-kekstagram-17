@@ -1,6 +1,7 @@
 'use strict';
 
 (function () {
+  // TODO переименовать обработчики по критерию Д4 и тут
   var ScaleConfig = {
     DEFAULT: 100,
     MIN: 25,
@@ -205,10 +206,10 @@
 
 
   var addEffectsChangeListeners = function (effectsEl) {
-    effectsEl.forEach(function (item) {
-      item.addEventListener('click', function () {
-        imgUploadPreviewEl.setAttribute(DATA_EFFECT, item.id);
-        applyEffect(item.id);
+    effectsEl.forEach(function (it) {
+      it.addEventListener('click', function () {
+        imgUploadPreviewEl.setAttribute(DATA_EFFECT, it.id);
+        applyEffect(it.id);
       });
     });
   };
@@ -322,8 +323,6 @@
       evt.stopPropagation();
       closeImgEditWindow();
       removeErrorPopup();
-      // TODO: вызывать вручную событие обработки этого клика, потому что генерить события просто так - это плохая практика
-      // но, с другой стороны, а как еще его именно что открыть?
       uploadFileEl.click();
     });
   };

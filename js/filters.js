@@ -21,11 +21,11 @@
   };
 
   var switchActiveButton = function (activeButton) {
-    buttonsEl.forEach(function (element) {
-      if (element === activeButton) {
-        element.classList.add(ButtonCls.ACTIVE);
+    buttonsEl.forEach(function (it) {
+      if (it === activeButton) {
+        it.classList.add(ButtonCls.ACTIVE);
       } else {
-        element.classList.remove(ButtonCls.ACTIVE);
+        it.classList.remove(ButtonCls.ACTIVE);
       }
     });
   };

@@ -130,8 +130,12 @@
   };
 
 
-  commentEl.addEventListener('input', validateCommentField);
-  hashTagsEl.addEventListener('input', validateHashTagsField);
+  commentEl.addEventListener('input', function () {
+    validateCommentField();
+  });
+  hashTagsEl.addEventListener('input', function () {
+    validateHashTagsField();
+  });
 
 
   window.validation = {
