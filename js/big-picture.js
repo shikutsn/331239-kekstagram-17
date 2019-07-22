@@ -92,7 +92,7 @@
     pictureDescriptionEl.textContent = photo.description;
   };
 
-  var openBigPicture = function (evt) {
+  var onPicturesClick = function (evt) {
     var clickedPicture = evt.target.closest('.picture');
     if (clickedPicture) {
       currentPictureIndex = Array.from(document.querySelectorAll('.picture')).indexOf(clickedPicture);
@@ -115,7 +115,5 @@
     }
   };
 
-  picturesEl.addEventListener('click', function () {
-    openBigPicture();
-  });
+  picturesEl.addEventListener('click', onPicturesClick);
 })();

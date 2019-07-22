@@ -63,12 +63,9 @@
   };
   var FILE_TYPES = ['gif', 'jpg', 'jpeg', 'png'];
   var DEFAULT_PREVIEW_IMAGE_PATH = 'img/upload-default-image.jpg';
-  var UPLOAD_URL = 'https://js.dump.academy/kekstagram';
 
   var uploadFileEl = document.querySelector('#upload-file');
-
   var imgEditWindowEl = document.querySelector('.img-upload__overlay');
-
   var imgEditWindowCloseEl = imgEditWindowEl.querySelector('#upload-cancel');
   var scaleValueEl = imgEditWindowEl.querySelector('.scale__control--value');
   var imgUploadPreviewEl = imgEditWindowEl.querySelector('.img-upload__preview img');
@@ -80,16 +77,8 @@
   var sliderLineEl = imgEditWindowEl.querySelector('.effect-level__line');
   var sliderDepthEl = imgEditWindowEl.querySelector('.effect-level__depth');
   var sliderValueEl = imgEditWindowEl.querySelector('.effect-level__value');
-  var imgUploadFormEl = document.querySelector('.img-upload__form');
   var commentEl = imgEditWindowEl.querySelector('.text__description');
   var hashTagsEl = imgEditWindowEl.querySelector('.text__hashtags');
-  var mainEl = document.querySelector('main');
-  var successTemplate = document.querySelector('#success')
-    .content
-    .querySelector('.success');
-  var errorTemplate = document.querySelector('#error')
-    .content
-    .querySelector('.error');
 
 
   var getFilterValue = function (key, value) {
@@ -258,93 +247,7 @@
   });
 
 
-  var uploadSuccess = function () {
-    closeImgEditWindow();
-
-    var successPopupEl = successTemplate.cloneNode(true);
-    mainEl.appendChild(successPopupEl);
-
-    var successPopupCloseBtnEl = document.querySelector('.success__button');
-
-    var removeSuccessPopup = function () {
-      if (mainEl.contains(successPopupEl)) {
-        mainEl.removeChild(successPopupEl);
-      }
-      successPopupCloseBtnEl.removeEventListener('click', onSuccessPopupClose);
-      window.removeEventListener('click', onSuccessPopupClose);
-      document.removeEventListener('keydown', onUploadSuccessEscPress);
-    };
-
-    var onSuccessPopupClose = function () {
-      removeSuccessPopup();
-    };
-
-    var onUploadSuccessEscPress = function (evt) {
-      if (window.util.isEscPressed(evt)) {
-        removeSuccessPopup();
-      }
-    };
-
-    successPopupCloseBtnEl.addEventListener('click', onSuccessPopupClose);
-    window.addEventListener('click', onSuccessPopupClose);
-    document.addEventListener('keydown', onUploadSuccessEscPress);
+  window.imgUploadForm = {
+    closeImgEditWindow: closeImgEditWindow
   };
-
-  var uploadError = function () {
-    imgEditWindowEl.classList.add('hidden');
-
-    var errorPopupEl = errorTemplate.cloneNode(true);
-    mainEl.appendChild(errorPopupEl);
-
-    var errorPopupAgainBtnEl = errorPopupEl.querySelector('.error__button--again');
-    var errorPopupAnotherBtnEl = errorPopupEl.querySelector('.error__button--another');
-
-    var removeErrorEvtListeners = function () {
-      window.removeEventListener('click', onErrorPopupClose);
-      document.removeEventListener('keydown', onUploadErrorEscPress);
-    };
-
-    var removeErrorPopup = function () {
-      if (mainEl.contains(errorPopupEl)) {
-        mainEl.removeChild(errorPopupEl);
-      }
-      removeErrorEvtListeners();
-    };
-
-    var onErrorPopupClose = removeErrorPopup;
-
-    var onUploadErrorEscPress = function (evt) {
-      if (window.util.isEscPressed(evt)) {
-        removeErrorPopup();
-      }
-    };
-
-    window.addEventListener('click', onErrorPopupClose);
-    document.addEventListener('keydown', onUploadErrorEscPress);
-
-    errorPopupAgainBtnEl.addEventListener('click', function (evt) {
-      evt.stopPropagation();
-      mainEl.removeChild(errorPopupEl);
-      imgEditWindowEl.classList.remove('hidden');
-      removeErrorEvtListeners();
-    });
-
-    errorPopupAnotherBtnEl.addEventListener('click', function (evt) {
-      evt.stopPropagation();
-      closeImgEditWindow();
-      removeErrorPopup();
-      uploadFileEl.click();
-    });
-  };
-
-  // TODO все-таки, окна с ошибками и предложениями попробовать снова работают криво. Со включенным отладчиком разобраться
-
-  imgUploadFormEl.addEventListener('submit', function (evt) {
-    var isformValid = window.validation.validateForm();
-    var uploadData = new FormData(imgUploadFormEl);
-    if (isformValid) {
-      evt.preventDefault();
-      window.backend.upload(UPLOAD_URL, uploadData, uploadSuccess, uploadError);
-    }
-  });
 })();
