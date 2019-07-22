@@ -1,8 +1,7 @@
 'use strict';
 
 (function () {
-  console.log('fix this');
-  var UPLOAD_URL = 'https://js.dump.academy/kekstagram1';
+  var UPLOAD_URL = 'https://js.dump.academy/kekstagram';
 
   var imgUploadFormEl = document.querySelector('.img-upload__form');
   var imgEditWindowEl = imgUploadFormEl.querySelector('.img-upload__overlay');
@@ -37,7 +36,6 @@
       }
     };
 
-    successPopupCloseBtnEl.addEventListener('click', onSuccessPopupClose);
     document.addEventListener('click', onSuccessPopupClose);
     document.addEventListener('keydown', onUploadSuccessEscPress);
   };
@@ -51,24 +49,18 @@
       .cloneNode(true);
     mainEl.appendChild(errorPopupEl);
 
-    // Сообщение должно исчезать после нажатия на кнопки .error__button
-    var errorPopupAgainBtnEl = errorPopupEl.querySelector('.error__button--again');
-    var errorPopupAnotherBtnEl = errorPopupEl.querySelector('.error__button--another');
+    var errorButtonsEl = errorPopupEl.querySelectorAll('.error__button');
 
-    var removeErrorEvtListeners = function () {
+    var removeErrorPopup = function () {
+      mainEl.removeChild(errorPopupEl);
+      imgEditWindowEl.classList.remove('hidden');
       document.removeEventListener('click', onErrorPopupClose);
       document.removeEventListener('keydown', onUploadErrorEscPress);
     };
 
-    var removeErrorPopup = function () {
-      // зачем этот иф?
-      if (mainEl.contains(errorPopupEl)) {
-        mainEl.removeChild(errorPopupEl);
-      }
-      removeErrorEvtListeners();
+    var onErrorPopupClose = function () {
+      removeErrorPopup();
     };
-
-    var onErrorPopupClose = removeErrorPopup;
 
     var onUploadErrorEscPress = function (evt) {
       if (window.util.isEscPressed(evt)) {
@@ -78,24 +70,11 @@
 
     document.addEventListener('click', onErrorPopupClose);
     document.addEventListener('keydown', onUploadErrorEscPress);
-
-    errorPopupAgainBtnEl.addEventListener('click', function (evt) {
-      evt.stopPropagation();
-      mainEl.removeChild(errorPopupEl);
-      imgEditWindowEl.classList.remove('hidden');
-      removeErrorEvtListeners();
-    });
-
-    errorPopupAnotherBtnEl.addEventListener('click', function (evt) {
-      evt.stopPropagation();
-      window.imgUploadForm.closeImgEditWindow();
-      removeErrorPopup();
+    errorButtonsEl.forEach(function (element) {
+      element.addEventListener('click', onErrorPopupClose);
     });
   };
 
-  // TODO все-таки, окна с ошибками и предложениями попробовать снова работают криво. Со включенным отладчиком разобраться
-  // TODO здесь я перемудрил, окна должны просто закрываться, этого достаточно
-  // TODO с закрыващихся (удаляемых из ДОМ) элементов снимать обработчики не обязательно?
 
   imgUploadFormEl.addEventListener('submit', function (evt) {
     var uploadData = new FormData(imgUploadFormEl);
