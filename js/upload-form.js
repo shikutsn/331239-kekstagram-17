@@ -132,7 +132,7 @@
 
   var openImgEditWindow = function () {
     imgEditWindowEl.classList.remove('hidden');
-    imgEditWindowCloseEl.addEventListener('click', closeImgEditWindow);
+    imgEditWindowCloseEl.addEventListener('click', onImgEditWindowCloseClick);
     document.addEventListener('keydown', onImgEditWindowEscPress);
 
     imgUploadPreviewEl.style.transform = getImgScaleValue(ScaleConfig.DEFAULT, ScaleConfig.MAX);
@@ -148,8 +148,12 @@
     hashTagsEl.value = '';
     commentEl.value = '';
     imgUploadPreviewEl.src = DEFAULT_PREVIEW_IMAGE_PATH;
-    imgEditWindowCloseEl.removeEventListener('click', closeImgEditWindow);
+    imgEditWindowCloseEl.removeEventListener('click', onImgEditWindowCloseClick);
     document.removeEventListener('keydown', onImgEditWindowEscPress);
+  };
+
+  var onImgEditWindowCloseClick = function () {
+    closeImgEditWindow();
   };
 
   var getCurrentImgScale = function (element) {
@@ -206,10 +210,10 @@
 
 
   var addEffectsChangeListeners = function (effectsEl) {
-    effectsEl.forEach(function (it) {
-      it.addEventListener('click', function () {
-        imgUploadPreviewEl.setAttribute(DATA_EFFECT, it.id);
-        applyEffect(it.id);
+    effectsEl.forEach(function (element) {
+      element.addEventListener('click', function () {
+        imgUploadPreviewEl.setAttribute(DATA_EFFECT, element.id);
+        applyEffect(element.id);
       });
     });
   };
@@ -266,9 +270,13 @@
       if (mainEl.contains(successPopupEl)) {
         mainEl.removeChild(successPopupEl);
       }
-      successPopupCloseBtnEl.removeEventListener('click', removeSuccessPopup);
-      window.removeEventListener('click', removeSuccessPopup);
+      successPopupCloseBtnEl.removeEventListener('click', onSuccessPopupClose);
+      window.removeEventListener('click', onSuccessPopupClose);
       document.removeEventListener('keydown', onUploadSuccessEscPress);
+    };
+
+    var onSuccessPopupClose = function () {
+      removeSuccessPopup();
     };
 
     var onUploadSuccessEscPress = function (evt) {
@@ -277,8 +285,8 @@
       }
     };
 
-    successPopupCloseBtnEl.addEventListener('click', removeSuccessPopup);
-    window.addEventListener('click', removeSuccessPopup);
+    successPopupCloseBtnEl.addEventListener('click', onSuccessPopupClose);
+    window.addEventListener('click', onSuccessPopupClose);
     document.addEventListener('keydown', onUploadSuccessEscPress);
   };
 
@@ -288,12 +296,12 @@
     var errorPopupEl = errorTemplate.cloneNode(true);
     mainEl.appendChild(errorPopupEl);
 
-    var errorPopupAgainBtnEl = document.querySelector('.error__button--again');
-    var errorPopupAnotherBtnEl = document.querySelector('.error__button--another');
+    var errorPopupAgainBtnEl = errorPopupEl.querySelector('.error__button--again');
+    var errorPopupAnotherBtnEl = errorPopupEl.querySelector('.error__button--another');
 
     var removeErrorEvtListeners = function () {
-      window.removeEventListener('click', removeErrorPopup);
-      document.removeEventListener('keydown', removeErrorPopup);
+      window.removeEventListener('click', onErrorPopupClose);
+      document.removeEventListener('keydown', onUploadErrorEscPress);
     };
 
     var removeErrorPopup = function () {
@@ -303,13 +311,15 @@
       removeErrorEvtListeners();
     };
 
+    var onErrorPopupClose = removeErrorPopup;
+
     var onUploadErrorEscPress = function (evt) {
       if (window.util.isEscPressed(evt)) {
         removeErrorPopup();
       }
     };
 
-    window.addEventListener('click', removeErrorPopup);
+    window.addEventListener('click', onErrorPopupClose);
     document.addEventListener('keydown', onUploadErrorEscPress);
 
     errorPopupAgainBtnEl.addEventListener('click', function (evt) {
@@ -327,6 +337,7 @@
     });
   };
 
+  // TODO все-таки, окна с ошибками и предложениями попробовать снова работают криво. Со включенным отладчиком разобраться
 
   imgUploadFormEl.addEventListener('submit', function (evt) {
     var isformValid = window.validation.validateForm();
