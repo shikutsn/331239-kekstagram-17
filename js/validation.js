@@ -17,7 +17,7 @@
   };
 
   var ValidityChecksMap = {
-    first: {
+    firstSymbol: {
       ACTION: function (hashTagsArr) {
         return hashTagsArr.every(function (it) {
           return it.charAt(0) === HashTagsValidationData.FIRST_SYMBOL;
@@ -25,7 +25,7 @@
       },
       INVALID_TEXT: 'Хэш-тег должен начинаться с символа #.'
     },
-    second: {
+    length: {
       ACTION: function (hashTagsArr) {
         return !hashTagsArr.some(function (it) {
           return it.length < HashTagsValidationData.LENGTH.MIN || it.length > HashTagsValidationData.LENGTH.MAX;
@@ -33,7 +33,7 @@
       },
       INVALID_TEXT: 'Длина хэш-тега не меньше 2 и не больше 20 символов.'
     },
-    third: {
+    similarity: {
       ACTION: function (hashTagsArr) {
         return hashTagsArr.length === hashTagsArr.filter(function (it, i, arr) {
           return arr.indexOf(it) === i;
@@ -41,7 +41,7 @@
       },
       INVALID_TEXT: 'Не должно быть одинаковых хэш-тегов.'
     },
-    fourth: {
+    quantity: {
       ACTION: function (hashTagsArr) {
         return hashTagsArr.length === hashTagsArr.filter(function (it, i, arr) {
           return arr.indexOf(it) === i;
@@ -130,8 +130,12 @@
   };
 
 
-  commentEl.addEventListener('input', validateCommentField);
-  hashTagsEl.addEventListener('input', validateHashTagsField);
+  commentEl.addEventListener('input', function () {
+    validateCommentField();
+  });
+  hashTagsEl.addEventListener('input', function () {
+    validateHashTagsField();
+  });
 
 
   window.validation = {

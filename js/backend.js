@@ -3,8 +3,11 @@
 (function () {
   var RESPONSE_CODE_OK = 200;
   var TIMEOUT = 10000;
-  var REQUEST_GET = 'GET';
-  var REQUEST_POST = 'POST';
+  var Request = {
+    GET: 'GET',
+    POST: 'POST'
+  };
+
 
   var createXHRequest = function (method, url, onSuccess, onError, data) {
     var xhr = new XMLHttpRequest();
@@ -39,10 +42,10 @@
 
   window.backend = {
     download: function (url, onSuccess, onError) {
-      createXHRequest(REQUEST_GET, url, onSuccess, onError);
+      createXHRequest(Request.GET, url, onSuccess, onError);
     },
     upload: function (url, data, onSuccess, onError) {
-      createXHRequest(REQUEST_POST, url, onSuccess, onError, data);
+      createXHRequest(Request.POST, url, onSuccess, onError, data);
     }
   };
 })();
