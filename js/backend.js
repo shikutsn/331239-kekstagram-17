@@ -3,6 +3,11 @@
 (function () {
   var RESPONSE_CODE_OK = 200;
   var TIMEOUT = 10000;
+  var Url = {
+    DOWNLOAD: 'https://js.dump.academy/kekstagram/data',
+    UPLOAD: 'https://js.dump.academy/kekstagram'
+  };
+
   var Request = {
     GET: 'GET',
     POST: 'POST'
@@ -41,6 +46,7 @@
 
 
   window.backend = {
+    Url: Url,
     download: function (url, onSuccess, onError) {
       createXHRequest(Request.GET, url, onSuccess, onError);
     },
