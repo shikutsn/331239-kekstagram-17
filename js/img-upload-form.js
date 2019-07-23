@@ -1,7 +1,6 @@
 'use strict';
 
 (function () {
-  // TODO переименовать обработчики по критерию Д4 и тут
   var ScaleConfig = {
     DEFAULT: 100,
     MIN: 25,
