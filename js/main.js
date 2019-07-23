@@ -34,5 +34,5 @@
   };
 
 
-  window.backend.download(window.backend.Url.DOWNLOAD, onLoadingSuccess, onLoadingError);
+  window.backend.download(onLoadingSuccess, onLoadingError);
 })();
