@@ -46,12 +46,11 @@
 
 
   window.backend = {
-    Url: Url,
-    download: function (url, onSuccess, onError) {
-      createXHRequest(Request.GET, url, onSuccess, onError);
+    download: function (onSuccess, onError) {
+      createXHRequest(Request.GET, Url.DOWNLOAD, onSuccess, onError);
     },
-    upload: function (url, data, onSuccess, onError) {
-      createXHRequest(Request.POST, url, onSuccess, onError, data);
+    upload: function (data, onSuccess, onError) {
+      createXHRequest(Request.POST, Url.UPLOAD, onSuccess, onError, data);
     }
   };
 })();

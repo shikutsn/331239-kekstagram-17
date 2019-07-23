@@ -78,7 +78,7 @@
     var uploadData = new FormData(imgUploadFormEl);
     if (window.validation.validateForm()) {
       evt.preventDefault();
-      window.backend.upload(window.backend.Url.UPLOAD, uploadData, uploadSuccess, uploadError);
+      window.backend.upload(uploadData, uploadSuccess, uploadError);
     }
   });
 })();
