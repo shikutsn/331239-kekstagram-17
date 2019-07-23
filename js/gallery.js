@@ -32,8 +32,8 @@
   };
 
   var clearCurrentPictures = function () {
-    document.querySelectorAll('.picture').forEach(function (element) {
-      element.remove();
+    document.querySelectorAll('.picture').forEach(function (it) {
+      it.remove();
     });
   };
 

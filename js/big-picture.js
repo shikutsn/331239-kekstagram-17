@@ -38,14 +38,18 @@
   var closeBigPicture = function () {
     bigPictureEl.classList.add('hidden');
     document.body.classList.remove('modal-open');
-    closeButtonEl.removeEventListener('click', closeBigPicture);
+    closeButtonEl.removeEventListener('click', onCloseButtonClick);
     document.removeEventListener('keydown', onBigPictureEscPress);
-    commentsLoaderEl.removeEventListener('click', renderComments);
+    commentsLoaderEl.removeEventListener('click', onCommentsLoaderClick);
+  };
+
+  var onCloseButtonClick = function () {
+    closeBigPicture();
   };
 
   var clearRenderedComments = function () {
-    commentsListEl.querySelectorAll('.social__comment').forEach(function (element) {
-      element.remove();
+    commentsListEl.querySelectorAll('.social__comment').forEach(function (it) {
+      it.remove();
     });
   };
 
@@ -62,8 +66,8 @@
     var comments = getRenderedPhotos()[currentPictureIndex].comments;
     var commentsTotalCount = comments.length;
 
-    comments.slice(commentsRenderedCount, commentsRenderedCount + COMMENTS_PER_PAGE).forEach(function (item) {
-      commentsListEl.appendChild(getCommentElement(item));
+    comments.slice(commentsRenderedCount, commentsRenderedCount + COMMENTS_PER_PAGE).forEach(function (it) {
+      commentsListEl.appendChild(getCommentElement(it));
     });
 
     commentsRenderedCount += COMMENTS_PER_PAGE;
@@ -78,13 +82,17 @@
     renderCommentsCounters(commentsRenderedCount, commentsTotalCount);
   };
 
+  var onCommentsLoaderClick = function () {
+    renderComments();
+  };
+
   var renderBigPicture = function (photo) {
     bigPictureImgEl.src = photo.url;
     likesCountEl.textContent = photo.likes;
     pictureDescriptionEl.textContent = photo.description;
   };
 
-  var openBigPicture = function (evt) {
+  var onPicturesClick = function (evt) {
     var clickedPicture = evt.target.closest('.picture');
     if (clickedPicture) {
       currentPictureIndex = Array.from(document.querySelectorAll('.picture')).indexOf(clickedPicture);
@@ -101,11 +109,11 @@
       renderComments();
 
 
-      closeButtonEl.addEventListener('click', closeBigPicture);
+      closeButtonEl.addEventListener('click', onCloseButtonClick);
       document.addEventListener('keydown', onBigPictureEscPress);
-      commentsLoaderEl.addEventListener('click', renderComments);
+      commentsLoaderEl.addEventListener('click', onCommentsLoaderClick);
     }
   };
 
-  picturesEl.addEventListener('click', openBigPicture);
+  picturesEl.addEventListener('click', onPicturesClick);
 })();

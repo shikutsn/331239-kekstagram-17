@@ -9,10 +9,6 @@
     return Math.floor(Math.random() * (max - min)) + min;
   };
 
-  var getRandomArrayElement = function (arr) {
-    return arr[getRandomNumber(0, arr.length)];
-  };
-
   var shuffleArray = function (arr) {
     // перемешивание алгоритмом Фишера — Йетса
     var result = arr.slice();
@@ -46,7 +42,6 @@
 
   window.util = {
     getRandomNumber: getRandomNumber,
-    getRandomArrayElement: getRandomArrayElement,
     shuffleArray: shuffleArray,
     debounce: debounce,
     isEscPressed: isEscPressed,

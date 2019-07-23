@@ -16,7 +16,7 @@
 
   var NO_EFFECT_KEY = 'effect-none';
   var DATA_EFFECT = 'data-effect';
-  var FILTERS_TABLE = {
+  var FiltersTable = {
     'effect-none': {
       CLASS: 'effects__preview--none',
       TEXT: 'none',
@@ -61,13 +61,10 @@
     }
   };
   var FILE_TYPES = ['gif', 'jpg', 'jpeg', 'png'];
-  var DEFAULT_PREVIEW_IMAGE = 'img/upload-default-image.jpg';
-  var UPLOAD_URL = 'https://js.dump.academy/kekstagram';
+  var DEFAULT_PREVIEW_IMAGE_PATH = 'img/upload-default-image.jpg';
 
   var uploadFileEl = document.querySelector('#upload-file');
-
   var imgEditWindowEl = document.querySelector('.img-upload__overlay');
-
   var imgEditWindowCloseEl = imgEditWindowEl.querySelector('#upload-cancel');
   var scaleValueEl = imgEditWindowEl.querySelector('.scale__control--value');
   var imgUploadPreviewEl = imgEditWindowEl.querySelector('.img-upload__preview img');
@@ -79,24 +76,17 @@
   var sliderLineEl = imgEditWindowEl.querySelector('.effect-level__line');
   var sliderDepthEl = imgEditWindowEl.querySelector('.effect-level__depth');
   var sliderValueEl = imgEditWindowEl.querySelector('.effect-level__value');
-  var imgUploadFormEl = document.querySelector('.img-upload__form');
   var commentEl = imgEditWindowEl.querySelector('.text__description');
   var hashTagsEl = imgEditWindowEl.querySelector('.text__hashtags');
-  var mainEl = document.querySelector('main');
-  var successTemplate = document.querySelector('#success')
-    .content
-    .querySelector('.success');
-  var errorTemplate = document.querySelector('#error')
-    .content
-    .querySelector('.error');
+
 
   var getFilterValue = function (key, value) {
     // превращает значение [0, 1] в корректный диапазон значений фильтра
-    return (FILTERS_TABLE[key].MAX - FILTERS_TABLE[key].MIN) * value + FILTERS_TABLE[key].MIN;
+    return (FiltersTable[key].MAX - FiltersTable[key].MIN) * value + FiltersTable[key].MIN;
   };
 
   var getFilterIntensity = function (key, value) {
-    return key === NO_EFFECT_KEY ? FILTERS_TABLE[key].TEXT : FILTERS_TABLE[key].TEXT + '(' + getFilterValue(key, value) + FILTERS_TABLE[key].UNIT + ')';
+    return key === NO_EFFECT_KEY ? FiltersTable[key].TEXT : FiltersTable[key].TEXT + '(' + getFilterValue(key, value) + FiltersTable[key].UNIT + ')';
   };
 
   var getSliderVisibilityText = function (key) {
@@ -105,7 +95,7 @@
 
   var applyEffect = function (key) {
     imgUploadPreviewEl.className = '';
-    imgUploadPreviewEl.classList.add(FILTERS_TABLE[key].CLASS);
+    imgUploadPreviewEl.classList.add(FiltersTable[key].CLASS);
     imgUploadPreviewEl.style.filter = getFilterIntensity(key, SliderConfig.DEFAULT_VALUE);
 
     sliderPinEl.style.left = SliderConfig.DEFAULT_PERCENT + '%';
@@ -130,7 +120,7 @@
 
   var openImgEditWindow = function () {
     imgEditWindowEl.classList.remove('hidden');
-    imgEditWindowCloseEl.addEventListener('click', closeImgEditWindow);
+    imgEditWindowCloseEl.addEventListener('click', onImgEditWindowCloseClick);
     document.addEventListener('keydown', onImgEditWindowEscPress);
 
     imgUploadPreviewEl.style.transform = getImgScaleValue(ScaleConfig.DEFAULT, ScaleConfig.MAX);
@@ -145,9 +135,13 @@
     uploadFileEl.value = '';
     hashTagsEl.value = '';
     commentEl.value = '';
-    imgUploadPreviewEl.src = DEFAULT_PREVIEW_IMAGE;
-    imgEditWindowCloseEl.removeEventListener('click', closeImgEditWindow);
+    imgUploadPreviewEl.src = DEFAULT_PREVIEW_IMAGE_PATH;
+    imgEditWindowCloseEl.removeEventListener('click', onImgEditWindowCloseClick);
     document.removeEventListener('keydown', onImgEditWindowEscPress);
+  };
+
+  var onImgEditWindowCloseClick = function () {
+    closeImgEditWindow();
   };
 
   var getCurrentImgScale = function (element) {
@@ -204,10 +198,10 @@
 
 
   var addEffectsChangeListeners = function (effectsEl) {
-    effectsEl.forEach(function (item) {
-      item.addEventListener('click', function () {
-        imgUploadPreviewEl.setAttribute(DATA_EFFECT, item.id);
-        applyEffect(item.id);
+    effectsEl.forEach(function (element) {
+      element.addEventListener('click', function () {
+        imgUploadPreviewEl.setAttribute(DATA_EFFECT, element.id);
+        applyEffect(element.id);
       });
     });
   };
@@ -252,88 +246,7 @@
   });
 
 
-  var uploadSuccess = function () {
-    closeImgEditWindow();
-
-    var successPopupEl = successTemplate.cloneNode(true);
-    mainEl.appendChild(successPopupEl);
-
-    var successPopupCloseBtnEl = document.querySelector('.success__button');
-
-    var removeSuccessPopup = function () {
-      if (mainEl.contains(successPopupEl)) {
-        mainEl.removeChild(successPopupEl);
-      }
-      successPopupCloseBtnEl.removeEventListener('click', removeSuccessPopup);
-      window.removeEventListener('click', removeSuccessPopup);
-      document.removeEventListener('keydown', onUploadSuccessEscPress);
-    };
-
-    var onUploadSuccessEscPress = function (evt) {
-      if (window.util.isEscPressed(evt)) {
-        removeSuccessPopup();
-      }
-    };
-
-    successPopupCloseBtnEl.addEventListener('click', removeSuccessPopup);
-    window.addEventListener('click', removeSuccessPopup);
-    document.addEventListener('keydown', onUploadSuccessEscPress);
+  window.imgUploadForm = {
+    closeImgEditWindow: closeImgEditWindow
   };
-
-  var uploadError = function () {
-    imgEditWindowEl.classList.add('hidden');
-
-    var errorPopupEl = errorTemplate.cloneNode(true);
-    mainEl.appendChild(errorPopupEl);
-
-    var errorPopupAgainBtnEl = document.querySelector('.error__button--again');
-    var errorPopupAnotherBtnEl = document.querySelector('.error__button--another');
-
-    var removeErrorEvtListeners = function () {
-      window.removeEventListener('click', removeErrorPopup);
-      document.removeEventListener('keydown', removeErrorPopup);
-    };
-
-    var removeErrorPopup = function () {
-      if (mainEl.contains(errorPopupEl)) {
-        mainEl.removeChild(errorPopupEl);
-      }
-      removeErrorEvtListeners();
-    };
-
-    var onUploadErrorEscPress = function (evt) {
-      if (window.util.isEscPressed(evt)) {
-        removeErrorPopup();
-      }
-    };
-
-    window.addEventListener('click', removeErrorPopup);
-    document.addEventListener('keydown', onUploadErrorEscPress);
-
-    errorPopupAgainBtnEl.addEventListener('click', function (evt) {
-      evt.stopPropagation();
-      mainEl.removeChild(errorPopupEl);
-      imgEditWindowEl.classList.remove('hidden');
-      removeErrorEvtListeners();
-    });
-
-    errorPopupAnotherBtnEl.addEventListener('click', function (evt) {
-      evt.stopPropagation();
-      closeImgEditWindow();
-      removeErrorPopup();
-      // TODO: вызывать вручную событие обработки этого клика, потому что генерить события просто так - это плохая практика
-      // но, с другой стороны, а как еще его именно что открыть?
-      uploadFileEl.click();
-    });
-  };
-
-
-  imgUploadFormEl.addEventListener('submit', function (evt) {
-    var isformValid = window.validation.validateForm();
-    var uploadData = new FormData(imgUploadFormEl);
-    if (isformValid) {
-      evt.preventDefault();
-      window.backend.upload(UPLOAD_URL, uploadData, uploadSuccess, uploadError);
-    }
-  });
 })();
