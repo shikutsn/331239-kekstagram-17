@@ -1,8 +1,6 @@
 'use strict';
 
 (function () {
-  var UPLOAD_URL = 'https://js.dump.academy/kekstagram';
-
   var imgUploadFormEl = document.querySelector('.img-upload__form');
   var imgEditWindowEl = imgUploadFormEl.querySelector('.img-upload__overlay');
   var mainEl = document.querySelector('main');
@@ -80,7 +78,7 @@
     var uploadData = new FormData(imgUploadFormEl);
     if (window.validation.validateForm()) {
       evt.preventDefault();
-      window.backend.upload(UPLOAD_URL, uploadData, uploadSuccess, uploadError);
+      window.backend.upload(window.backend.Url.UPLOAD, uploadData, uploadSuccess, uploadError);
     }
   });
 })();

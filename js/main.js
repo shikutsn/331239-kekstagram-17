@@ -1,7 +1,6 @@
 'use strict';
 
 (function () {
-  var DOWNLOAD_URL = 'https://js.dump.academy/kekstagram/data';
   var LoadingErrorStyles = {
     'z-index': '100',
     'margin': '0 auto',
@@ -35,5 +34,5 @@
   };
 
 
-  window.backend.download(DOWNLOAD_URL, onLoadingSuccess, onLoadingError);
+  window.backend.download(window.backend.Url.DOWNLOAD, onLoadingSuccess, onLoadingError);
 })();
