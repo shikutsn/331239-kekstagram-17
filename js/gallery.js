@@ -22,9 +22,7 @@
   };
 
   var renderGallery = function (photos) {
-    var pictureTemplate = document.querySelector('#picture')
-      .content
-      .querySelector('.picture');
+    var pictureTemplate = document.querySelector('#picture').content.querySelector('.picture');
     var fragment = fillFragment(photos, pictureTemplate);
     var picturesEl = document.querySelector('.pictures');
 
@@ -32,14 +30,13 @@
   };
 
   var clearCurrentPictures = function () {
-    document.querySelectorAll('.picture').forEach(function (it) {
-      it.remove();
+    document.querySelectorAll('.picture').forEach(function (picture) {
+      picture.remove();
     });
   };
 
-
   window.gallery = {
-    renderGallery: renderGallery,
+    render: renderGallery,
     clearCurrentPictures: clearCurrentPictures
   };
 })();

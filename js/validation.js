@@ -19,16 +19,16 @@
   var ValidityChecksMap = {
     firstSymbol: {
       ACTION: function (hashTagsArr) {
-        return hashTagsArr.every(function (it) {
-          return it.charAt(0) === HashTagsValidationData.FIRST_SYMBOL;
+        return hashTagsArr.every(function (hashTag) {
+          return hashTag.charAt(0) === HashTagsValidationData.FIRST_SYMBOL;
         });
       },
       INVALID_TEXT: 'Хэш-тег должен начинаться с символа #.'
     },
     length: {
       ACTION: function (hashTagsArr) {
-        return !hashTagsArr.some(function (it) {
-          return it.length < HashTagsValidationData.LENGTH.MIN || it.length > HashTagsValidationData.LENGTH.MAX;
+        return !hashTagsArr.some(function (hashTag) {
+          return hashTag.length < HashTagsValidationData.LENGTH.MIN || hashTag.length > HashTagsValidationData.LENGTH.MAX;
         });
       },
       INVALID_TEXT: 'Длина хэш-тега не меньше 2 и не больше 20 символов.'
@@ -77,10 +77,10 @@
   };
 
   var getHashTagsArray = function (hashTagsString) {
-    return hashTagsString.split(HashTagsValidationData.SEPARATOR).filter(function (it) {
-      return !!it;
-    }).map(function (it) {
-      return it.toUpperCase();
+    return hashTagsString.split(HashTagsValidationData.SEPARATOR).filter(function (hashTag) {
+      return !!hashTag;
+    }).map(function (hashTag) {
+      return hashTag.toUpperCase();
     });
   };
 
@@ -129,14 +129,12 @@
     return (validateHashTagsField() && validateCommentField());
   };
 
-
   commentEl.addEventListener('input', function () {
     validateCommentField();
   });
   hashTagsEl.addEventListener('input', function () {
     validateHashTagsField();
   });
-
 
   window.validation = {
     validateForm: validateForm

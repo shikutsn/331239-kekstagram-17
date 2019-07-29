@@ -79,9 +79,8 @@
   var commentEl = imgEditWindowEl.querySelector('.text__description');
   var hashTagsEl = imgEditWindowEl.querySelector('.text__hashtags');
 
-
+  // превращает значение [0, 1] в корректный диапазон значений фильтра
   var getFilterValue = function (key, value) {
-    // превращает значение [0, 1] в корректный диапазон значений фильтра
     return (FiltersTable[key].MAX - FiltersTable[key].MIN) * value + FiltersTable[key].MIN;
   };
 
@@ -93,17 +92,17 @@
     return key === NO_EFFECT_KEY ? 'hidden' : 'visible';
   };
 
-  var applyEffect = function (key) {
+  var applyEffect = function (effect) {
     imgUploadPreviewEl.className = '';
-    imgUploadPreviewEl.classList.add(FiltersTable[key].CLASS);
-    imgUploadPreviewEl.style.filter = getFilterIntensity(key, SliderConfig.DEFAULT_VALUE);
+    imgUploadPreviewEl.classList.add(FiltersTable[effect].CLASS);
+    imgUploadPreviewEl.style.filter = getFilterIntensity(effect, SliderConfig.DEFAULT_VALUE);
 
     sliderPinEl.style.left = SliderConfig.DEFAULT_PERCENT + '%';
     sliderDepthEl.style.width = SliderConfig.DEFAULT_PERCENT + '%';
-    sliderEl.style.visibility = getSliderVisibilityText(key);
+    sliderEl.style.visibility = getSliderVisibilityText(effect);
     sliderValueEl.value = SliderConfig.DEFAULT_PERCENT;
 
-    imgEditWindowEl.querySelector('#' + key).checked = true;
+    imgEditWindowEl.querySelector('#' + effect).checked = true;
   };
 
   var onImgEditWindowEscPress = function (evt) {
@@ -164,7 +163,6 @@
     }
   };
 
-
   scaleDecrementEl.addEventListener('click', function () {
     decrementImgScale(imgUploadPreviewEl, scaleValueEl);
   });
@@ -176,8 +174,8 @@
     var file = fileEl.files[0];
     var fileName = file.name.toLowerCase();
 
-    var matches = FILE_TYPES.some(function (it) {
-      return fileName.endsWith(it);
+    var matches = FILE_TYPES.some(function (extension) {
+      return fileName.endsWith(extension);
     });
 
     if (matches) {
@@ -191,12 +189,6 @@
     }
   };
 
-  uploadFileEl.addEventListener('change', function () {
-    loadImgFromDisc(uploadFileEl, imgUploadPreviewEl);
-    openImgEditWindow();
-  });
-
-
   var addEffectsChangeListeners = function (effectsEl) {
     effectsEl.forEach(function (element) {
       element.addEventListener('click', function () {
@@ -207,7 +199,6 @@
   };
 
   addEffectsChangeListeners(effectSelectorsEl);
-
 
   sliderPinEl.addEventListener('mousedown', function (evt) {
     var startX = evt.clientX;
@@ -245,8 +236,13 @@
     document.addEventListener('mouseup', onMouseUp);
   });
 
-
   window.imgUploadForm = {
-    closeImgEditWindow: closeImgEditWindow
+    closeImgEditWindow: closeImgEditWindow,
+    init: function () {
+      uploadFileEl.addEventListener('change', function () {
+        loadImgFromDisc(uploadFileEl, imgUploadPreviewEl);
+        openImgEditWindow();
+      });
+    }
   };
 })();

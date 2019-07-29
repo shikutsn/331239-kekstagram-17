@@ -7,7 +7,6 @@
   var discussedPhotos = [];
   var newPhotos = [];
 
-
   var getNew = function () {
     if (!newPhotos.length) {
       newPhotos = window.util.shuffleArray(photos).slice(0, NEW_PHOTOS_QUANTITY);
@@ -30,14 +29,12 @@
 
   var setData = function (data) {
     photos = data;
-    getDiscussed();
   };
-
 
   window.data = {
     getNew: getNew,
     getDiscussed: getDiscussed,
     getPopular: getPopular,
-    setData: setData
+    set: setData
   };
 })();

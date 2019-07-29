@@ -13,7 +13,6 @@
     'fontSize': '30px'
   };
 
-
   var onLoadingError = function (errorMessage) {
     var loadingErrorEl = document.createElement('div');
 
@@ -28,11 +27,12 @@
   };
 
   var onLoadingSuccess = function (photos) {
-    window.data.setData(photos);
-    window.gallery.renderGallery(photos);
-    window.filters.showFiltersForm();
+    window.data.set(photos);
+    window.gallery.render(photos);
+    window.filters.showForm();
+    window.bigPicture.init();
+    window.imgUploadForm.init();
   };
-
 
   window.backend.download(onLoadingSuccess, onLoadingError);
 })();
