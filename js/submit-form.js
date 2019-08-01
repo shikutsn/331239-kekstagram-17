@@ -5,7 +5,6 @@
   var imgEditWindowEl = imgUploadFormEl.querySelector('.img-upload__overlay');
   var mainEl = document.querySelector('main');
 
-
   var uploadSuccess = function () {
     window.imgUploadForm.closeImgEditWindow();
 
@@ -72,7 +71,6 @@
       element.addEventListener('click', onErrorPopupClose);
     });
   };
-
 
   imgUploadFormEl.addEventListener('submit', function (evt) {
     var uploadData = new FormData(imgUploadFormEl);

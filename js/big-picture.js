@@ -18,7 +18,6 @@
   var commentsRenderedCount;
   var currentPictureIndex;
 
-
   var getCommentElement = function (comment) {
     var result = commentTemplateEl.cloneNode(true);
     var commentAvatar = result.querySelector('.social__picture');
@@ -48,8 +47,8 @@
   };
 
   var clearRenderedComments = function () {
-    commentsListEl.querySelectorAll('.social__comment').forEach(function (it) {
-      it.remove();
+    commentsListEl.querySelectorAll('.social__comment').forEach(function (element) {
+      element.remove();
     });
   };
 
@@ -58,12 +57,13 @@
     commentsTotalCountEl.textContent = commentsTotal;
   };
 
-  var getRenderedPhotos = function () {
-    return window.filters.FiltersMap[window.filters.getCurrentFilter()]();
+  var getCurrentPhoto = function (currentPhotoIndex) {
+    var renderedPhotosCollection = window.filters.Map[window.filters.getCurrent()]();
+    return renderedPhotosCollection[currentPhotoIndex];
   };
 
   var renderComments = function () {
-    var comments = getRenderedPhotos()[currentPictureIndex].comments;
+    var comments = getCurrentPhoto(currentPictureIndex).comments;
     var commentsTotalCount = comments.length;
 
     comments.slice(commentsRenderedCount, commentsRenderedCount + COMMENTS_PER_PAGE).forEach(function (it) {
@@ -96,7 +96,7 @@
     var clickedPicture = evt.target.closest('.picture');
     if (clickedPicture) {
       currentPictureIndex = Array.from(document.querySelectorAll('.picture')).indexOf(clickedPicture);
-      var clickedPhoto = getRenderedPhotos()[currentPictureIndex];
+      var clickedPhoto = getCurrentPhoto(currentPictureIndex);
 
       commentsRenderedCount = 0;
 
@@ -115,5 +115,9 @@
     }
   };
 
-  picturesEl.addEventListener('click', onPicturesClick);
+  window.bigPicture = {
+    init: function () {
+      picturesEl.addEventListener('click', onPicturesClick);
+    }
+  };
 })();

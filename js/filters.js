@@ -15,18 +15,16 @@
   var imgFiltersFormEl = document.querySelector('.img-filters__form');
   var buttonsEl = imgFiltersFormEl.querySelectorAll('.' + ButtonCls.DEFAULT);
 
-
   var getCurrentFilter = function () {
     return imgFiltersFormEl.querySelector('.' + ButtonCls.ACTIVE).id;
   };
 
   var switchActiveButton = function (activeButton) {
-    buttonsEl.forEach(function (it) {
-      if (it === activeButton) {
-        it.classList.add(ButtonCls.ACTIVE);
-      } else {
-        it.classList.remove(ButtonCls.ACTIVE);
+    buttonsEl.forEach(function (button) {
+      if (button === activeButton) {
+        return button.classList.add(ButtonCls.ACTIVE);
       }
+      return button.classList.remove(ButtonCls.ACTIVE);
     });
   };
 
@@ -36,7 +34,7 @@
     if (pressedButton) {
       window.gallery.clearCurrentPictures();
       switchActiveButton(pressedButton);
-      window.gallery.renderGallery(FiltersMap[pressedButton.id]());
+      window.gallery.render(FiltersMap[pressedButton.id]());
     }
   };
 
@@ -46,13 +44,11 @@
     document.querySelector('.img-filters').classList.remove('img-filters--inactive');
   };
 
-
   imgFiltersFormEl.addEventListener('click', onFiltersFormClickDebounced);
 
-
   window.filters = {
-    showFiltersForm: showFiltersForm,
-    getCurrentFilter: getCurrentFilter,
-    FiltersMap: FiltersMap
+    showForm: showFiltersForm,
+    getCurrent: getCurrentFilter,
+    Map: FiltersMap
   };
 })();
